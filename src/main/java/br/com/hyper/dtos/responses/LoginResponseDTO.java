@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class LoginResponseDTO {
 
-    private String email;
+    private CustomerResponseDTO customer;
     private TokenResponseDTO token;
 }

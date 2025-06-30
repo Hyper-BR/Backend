@@ -2,6 +2,7 @@ package br.com.hyper.controllers;
 
 import br.com.hyper.dtos.requests.CartRequestDTO;
 import br.com.hyper.dtos.responses.pages.ArtistPageResponseDTO;
+import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.ArtistService;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,9 +28,11 @@ public class ArtistController {
     private final ArtistService artistService;
 
     @PostMapping(value = "/artist")
-    public ResponseEntity<ArtistResponseDTO> save(@RequestBody @Valid ArtistRequestDTO artist) {
+    public ResponseEntity<ArtistResponseDTO> save(@RequestBody ArtistRequestDTO artist, @AuthenticationPrincipal CustomerEntity customer) {
 
-        ArtistResponseDTO response = artistService.save(artist);
+        log.info("----------------------------: {}", customer.getName());
+
+        ArtistResponseDTO response = artistService.save(artist, customer);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -1,6 +1,5 @@
 package br.com.hyper.dtos.requests;
 
-import br.com.hyper.enums.UserRole;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;

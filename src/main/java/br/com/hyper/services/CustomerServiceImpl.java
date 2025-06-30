@@ -97,8 +97,24 @@ public class CustomerServiceImpl implements CustomerService {
 
         LoginResponseDTO response = new LoginResponseDTO();
         response.setToken(tokenResponse);
+        response.setCustomer(modelMapper.map(customer, CustomerResponseDTO.class));
 
         modelMapper.map(customer, response);
+
+        return response;
+    }
+
+    public LoginResponseDTO refresh(CustomerEntity customer) {
+
+        CustomerEntity customerEntity = findByEmailOrThrowUserDataNotFoundException(customer.getEmail());
+        String token = customerTokenUtil.generateToken(customerEntity);
+
+        TokenResponseDTO tokenResponse = new TokenResponseDTO();
+        tokenResponse.setToken(token);
+
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setToken(tokenResponse);
+        response.setCustomer(modelMapper.map(customerEntity, CustomerResponseDTO.class));
 
         return response;
     }

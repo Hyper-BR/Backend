@@ -40,6 +40,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/track").permitAll()
                         .requestMatchers(HttpMethod.GET, "/album").permitAll()
                         .requestMatchers(HttpMethod.GET, "/artist").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/artist").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(customerSecurityFilterUtil, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedEntryPoint())

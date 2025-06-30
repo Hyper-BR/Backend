@@ -2,6 +2,7 @@ package br.com.hyper.services;
 
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.requests.CartRequestDTO;
+import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.pages.ArtistPageResponseDTO;
 import br.com.hyper.entities.CartEntity;
 import br.com.hyper.enums.UserRole;
@@ -45,9 +46,8 @@ public class ArtistServiceImpl implements ArtistService {
     private final CartRepository cartRepository;
 
     @Override
-    public ArtistResponseDTO save(ArtistRequestDTO artistDTO) {
+    public ArtistResponseDTO save(ArtistRequestDTO artistDTO, CustomerEntity  customer) {
         try {
-            CustomerEntity customer = findByEmailOrThrowUserDataNotFoundException(artistDTO.getEmail());
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setCustomer(customer);

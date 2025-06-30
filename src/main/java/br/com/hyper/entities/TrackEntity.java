@@ -28,9 +28,8 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "DURATION", nullable = false)
     private float duration;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "GENRE", nullable = false)
-    private Genre genre;
+    private String genre;
 
     @Column(name = "PRICE", nullable = false)
     private int price;

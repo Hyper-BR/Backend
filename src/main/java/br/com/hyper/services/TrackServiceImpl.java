@@ -48,7 +48,7 @@ public class TrackServiceImpl implements TrackService {
                 .duration(track.getFile().getSize())
                 .price(3)
                 .image(track.getImage())
-                .genre(Genre.valueOf(track.getGenre()))
+                .genre(track.getGenre())
                 .artist(artist)
                 .path(artist.getUsername() + "/" + Genre.valueOf(track.getGenre()) + "/" + track.getName())
                 .build();
