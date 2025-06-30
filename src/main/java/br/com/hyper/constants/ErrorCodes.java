@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ErrorCodes {
 
 	DATA_NOT_FOUND("DATA_NOT_FOUND", "Data not found"),
+	FILE_READ_ERROR("FILE_READ_ERROR", "File read error"),
 	DUPLICATED_DATA("DUPLICATED_DATA", "Trying to save data that already exists"),
 	AWS_SECRETS_ERROR("AWS_SECRETS_ERROR", "Something went wrong with the secrets"),
 	AWS_CONNECTION_ERROR("AWS_CONNECTION_ERROR", "Something went wrong with the save");

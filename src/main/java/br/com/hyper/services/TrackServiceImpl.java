@@ -19,6 +19,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Slf4j
@@ -39,7 +45,7 @@ public class TrackServiceImpl implements TrackService {
     private final AmazonBucketS3 amazonBucketS3;
 
     @Override
-    public TrackResponseDTO save(TrackRequestDTO track, Long artistId) {
+    public TrackResponseDTO save(TrackRequestDTO track, Long artistId) throws IOException {
 
         ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(artistId);
 
@@ -53,7 +59,20 @@ public class TrackServiceImpl implements TrackService {
                 .path(artist.getUsername() + "/" + Genre.valueOf(track.getGenre()) + "/" + track.getName())
                 .build();
 
-        amazonBucketS3.uploadArtistTrack(trackEntity.getPath(), track.getFile());
+        // Salva a track localmente - remover
+
+        try {
+        Path outputPath = Paths.get("uploads", trackEntity.getPath() + ".mp3");
+        Files.createDirectories(outputPath.getParent());
+            try (InputStream inputStream = track.getFile().getInputStream()) {
+                Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            throw new TrackException(ErrorCodes.FILE_READ_ERROR, e);
+        }
+
+        // Salva a track no S3
+//        amazonBucketS3.uploadArtistTrack(trackEntity.getPath(), track.getFile());
 
         trackRepository.save(trackEntity);
 
