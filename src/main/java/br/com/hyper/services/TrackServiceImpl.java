@@ -1,7 +1,6 @@
 package br.com.hyper.services;
 
 import br.com.hyper.dtos.responses.pages.TrackPageResponseDTO;
-import br.com.hyper.enums.Genre;
 import br.com.hyper.exceptions.TrackException;
 import br.com.hyper.repositories.TrackRepository;
 import br.com.hyper.constants.ErrorCodes;
@@ -51,19 +50,19 @@ public class TrackServiceImpl implements TrackService {
 
         TrackEntity trackEntity = TrackEntity.builder()
                 .name(track.getName())
-                .duration(track.getFile().getSize())
+                .size(track.getFile().getSize() / 1024f)
                 .price(3)
                 .image(track.getImage())
                 .genre(track.getGenre())
                 .artist(artist)
-                .path(artist.getUsername() + "/" + Genre.valueOf(track.getGenre()) + "/" + track.getName())
+                .path(artist.getUsername() + "/" + track.getGenre() + "/" + track.getName())
                 .build();
 
         // Salva a track localmente - remover
 
         try {
-        Path outputPath = Paths.get("uploads", trackEntity.getPath() + ".mp3");
-        Files.createDirectories(outputPath.getParent());
+            Path outputPath = Paths.get("uploads", trackEntity.getPath() + ".mp3");
+            Files.createDirectories(outputPath.getParent());
             try (InputStream inputStream = track.getFile().getInputStream()) {
                 Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
             }
@@ -108,7 +107,10 @@ public class TrackServiceImpl implements TrackService {
         TrackEntity trackCurrent = findByIdOrThrowTrackDataNotFoundException(id);
 
         trackCurrent.setName(track.getName());
-        trackCurrent.setDuration(track.getDuration());
+        trackCurrent.setGenre(track.getGenre());
+        trackCurrent.setImage(track.getImage());
+        trackCurrent.setSize(track.getFile().getSize() / 1024f);
+        trackCurrent.setPath(trackCurrent.getArtist().getUsername() + "/" + track.getGenre() + "/" + track.getName());
 
         trackRepository.save(trackCurrent);
 
@@ -126,14 +128,22 @@ public class TrackServiceImpl implements TrackService {
     public byte[] downloadTrack(Long id) {
 
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
-        return amazonBucketS3.downloadTrack(track.getPath());
+//        return amazonBucketS3.downloadTrack(track.getPath());
+
+        Path filePath = Paths.get("uploads", track.getPath() + ".mp3");
+        try {
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            throw new TrackException(ErrorCodes.FILE_READ_ERROR, e);
+        }
     }
 
     public String getTrackUrl(Long id) {
 
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 
-        return amazonBucketS3.getTrackUrl(track.getPath());
+//        return amazonBucketS3.getTrackUrl(track.getPath());
+        return Paths.get("uploads", track.getPath() + ".mp3").toString();
     }
 
     private TrackEntity findByIdOrThrowTrackDataNotFoundException(Long id) {

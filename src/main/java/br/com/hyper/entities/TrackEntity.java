@@ -1,6 +1,5 @@
 package br.com.hyper.entities;
 
-import br.com.hyper.enums.Genre;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +25,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
     private String name;
 
     @Column(name = "DURATION", nullable = false)
-    private float duration;
+    private float size;
 
     @Column(name = "GENRE", nullable = false)
     private String genre;
