@@ -2,30 +2,31 @@ package br.com.hyper.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.UUID;
 
-@Data
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "COLLECTION")
-@EqualsAndHashCode(callSuper = false)
+@Table(name = "COLLECTIONS")
 public class CollectionEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "COLLECTION_SEQ")
-    @SequenceGenerator(name = "COLLECTION_SEQ", sequenceName = "COLLECTION_SEQ", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Column(name = "ID", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "NAME", nullable = false)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER", nullable = false)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private CustomerEntity customer;
 
 //    @OneToMany(fetch = FetchType.LAZY)

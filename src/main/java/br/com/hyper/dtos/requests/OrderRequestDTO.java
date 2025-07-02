@@ -1,14 +1,14 @@
 package br.com.hyper.dtos.requests;
 
-import br.com.hyper.entities.CustomerEntity;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class OrderRequestDTO {
 
-    private Long id;
+    private UUID id;
 
     private int totalItems;
 

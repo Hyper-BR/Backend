@@ -3,9 +3,12 @@ package br.com.hyper.entities;
 import br.com.hyper.enums.SubscriptionOption;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,9 +19,10 @@ import java.math.BigDecimal;
 public class SubscriptionEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SUBSCRIPTIONS_SEQ")
-    @SequenceGenerator(name = "SUBSCRIPTIONS_SEQ", sequenceName = "SUBSCRIPTIONS_SEQ", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Column(name = "ID", updatable = false, nullable = false)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "PLAN", nullable = false)

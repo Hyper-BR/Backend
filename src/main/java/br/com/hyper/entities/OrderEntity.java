@@ -2,24 +2,26 @@ package br.com.hyper.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.UUID;
 
-@Data
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ORDER_TABLE")
-@EqualsAndHashCode(callSuper = false)
+@Table(name = "ORDERS")
 public class OrderEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORDER_SEQ")
-    @SequenceGenerator(name = "ORDER_SEQ", sequenceName = "ORDER_SEQ", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Column(name = "ID", updatable = false, nullable = false)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER", nullable = false)

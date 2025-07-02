@@ -2,24 +2,26 @@ package br.com.hyper.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
+import java.util.UUID;
 
-@Data
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "RELEASE")
+@Table(name = "RELEASES")
 @Builder
-@EqualsAndHashCode(callSuper = false)
 public class ReleaseEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRACK_SEQ")
-    @SequenceGenerator(name = "TRACK_SEQ", sequenceName = "TRACK_SEQ", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Column(name = "ID", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "NAME", nullable = false)
     private String name;
@@ -35,12 +37,6 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
 
     @Column(name = "IMAGE", nullable = false)
     private String image;
-
-    @Column(name = "SPOTIFY_ID")
-    private Long spotifyId;
-
-    @Column(name = "ITUNES_ID")
-    private Long itunesId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ARTIST", nullable = false)

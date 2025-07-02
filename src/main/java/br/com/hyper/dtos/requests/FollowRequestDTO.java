@@ -1,15 +1,15 @@
 package br.com.hyper.dtos.requests;
 
-import br.com.hyper.entities.CustomerEntity;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Data
 public class FollowRequestDTO {
 
-    private Long id;
+    private UUID id;
 
     @NotEmpty(message = "Invalid email, can not be empty")
     private String email;

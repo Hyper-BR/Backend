@@ -2,9 +2,12 @@ package br.com.hyper.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,9 +18,10 @@ import java.util.List;
 public class ArtistEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ARTISTS_SEQ")
-    @SequenceGenerator(name = "ARTISTS_SEQ", sequenceName = "ARTISTS_SEQ", allocationSize = 1)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Column(name = "ID", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
