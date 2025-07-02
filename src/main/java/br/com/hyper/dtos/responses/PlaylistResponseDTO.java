@@ -1,11 +1,13 @@
 package br.com.hyper.dtos.responses;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class PlaylistResponseDTO {
     private Long id;
     private String name;
-
-
+    private String description;
+    private String image;
 }

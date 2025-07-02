@@ -11,6 +11,4 @@ public class PlaylistRequestDTO {
 
     @NotEmpty(message = "Invalid name, can not be empty")
     private String name;
-
-    private Long trackId;
 }

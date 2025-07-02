@@ -1,8 +1,8 @@
 spring:
   jpa:
     database: POSTGRESQL
-    show-sql: false
-    generate-ddl: true
+    show-sql: true
+    generate-ddl: false
     hibernate:
       ddl-auto: none
   datasource:

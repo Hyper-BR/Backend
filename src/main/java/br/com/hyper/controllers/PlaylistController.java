@@ -3,6 +3,7 @@ package br.com.hyper.controllers;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.responses.pages.PlaylistPageReponseDTO;
+import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.PlaylistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +12,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -25,9 +28,9 @@ public class PlaylistController {
 
     @PostMapping(value = "/playlist")
     public ResponseEntity<PlaylistResponseDTO> save(
-            @RequestBody @Valid PlaylistRequestDTO playlist) {
+            @RequestBody PlaylistRequestDTO playlist, @AuthenticationPrincipal CustomerEntity customer) {
 
-        PlaylistResponseDTO response = playlistService.save(playlist);
+        PlaylistResponseDTO response = playlistService.save(playlist, customer);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -42,6 +45,14 @@ public class PlaylistController {
         Pageable pageable = PageRequest.of(page, size);
 
         PlaylistPageReponseDTO response = playlistService.find(name, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping(value = "/playlist/customer")
+    public ResponseEntity<List<PlaylistResponseDTO>> find(@AuthenticationPrincipal CustomerEntity customer) {
+
+        List<PlaylistResponseDTO> response = playlistService.findByCustomer(customer.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

@@ -11,14 +11,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-@Data
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "CUSTOMER")
-@EqualsAndHashCode(callSuper = false)
 public class CustomerEntity extends BaseEntity implements Serializable, UserDetails {
 
     @Id
@@ -44,15 +42,18 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @Column(name = "BIRTH_DATE", nullable = false)
     private String birthDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "SUBSCRIPTION", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "SUBSCRIPTION_ID", nullable = false)
     private SubscriptionEntity subscription;
 
     @JoinColumn(name = "ROLE", nullable = false)
     private UserRole role;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "customer")
     private List<ArtistEntity> artistProfiles;
+
+    @OneToMany(mappedBy = "customer")
+    private List<PlaylistEntity> playlists;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

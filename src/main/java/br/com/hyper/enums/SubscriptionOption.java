@@ -2,9 +2,10 @@ package br.com.hyper.enums;
 
 public enum SubscriptionOption {
 
-    STANDARD,
+    FREE,
     SOLO,
     COUPLE,
-    STUDENT,
-    FAMILY
+    FAMILY,
+    ARTIST,
+    LABEL
 }
