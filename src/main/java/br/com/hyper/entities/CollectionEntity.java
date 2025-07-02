@@ -28,7 +28,7 @@ public class CollectionEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "CUSTOMER", nullable = false)
     private CustomerEntity customer;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PLAYLIST", nullable = false)
-    private List<PlaylistEntity> playlists;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "PLAYLIST", nullable = false)
+//    private List<PlaylistEntity> playlists;
 }

@@ -35,7 +35,7 @@ public class CartEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "ARTIST", nullable = false)
     private ArtistEntity artist;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "CART_TRACK",
             joinColumns = @JoinColumn(name = "CART_ID"),

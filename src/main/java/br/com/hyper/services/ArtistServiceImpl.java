@@ -64,11 +64,11 @@ public class ArtistServiceImpl implements ArtistService {
 
             cartRepository.save(cart);
 
-            List<ArtistEntity> artists = customer.getArtistProfiles();
-            artists.add(artist);
-            customer.setRole(UserRole.ARTIST);
-            customer.setArtistProfiles(artists);
-            customerRepository.save(customer);
+//            List<ArtistEntity> artists = customer.getArtistProfiles();
+//            artists.add(artist);
+//            customer.setRole(UserRole.ARTIST);
+//            customer.setArtistProfiles(artists);
+//            customerRepository.save(customer);
 
             return modelMapper.map(artist, ArtistResponseDTO.class);
         } catch (DataIntegrityViolationException e) {

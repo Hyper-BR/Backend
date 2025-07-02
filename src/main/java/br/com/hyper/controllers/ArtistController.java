@@ -30,8 +30,6 @@ public class ArtistController {
     @PostMapping(value = "/artist")
     public ResponseEntity<ArtistResponseDTO> save(@RequestBody ArtistRequestDTO artist, @AuthenticationPrincipal CustomerEntity customer) {
 
-        log.info("----------------------------: {}", customer.getName());
-
         ArtistResponseDTO response = artistService.save(artist, customer);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

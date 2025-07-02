@@ -5,6 +5,7 @@ import br.com.hyper.dtos.requests.PlaylistRequestDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.responses.pages.PlaylistPageReponseDTO;
 import br.com.hyper.entities.CustomerEntity;
+import br.com.hyper.entities.PlaylistEntity;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.exceptions.TrackException;
@@ -27,13 +28,13 @@ import java.util.List;
 public class PlaylistServiceImpl implements PlaylistService {
 
     @Autowired
-    private final PlaylistRepository playlistRepository;
+    private PlaylistRepository playlistRepository;
 
     @Autowired
-    private final TrackRepository trackRepository;
+    private TrackRepository trackRepository;
 
     @Autowired
-    private final ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Override
     public PlaylistResponseDTO save(PlaylistRequestDTO playlist, CustomerEntity customer) {

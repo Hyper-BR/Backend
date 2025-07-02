@@ -6,14 +6,12 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.List;
 
-@Data
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "ARTIST")
-@EqualsAndHashCode(callSuper = false)
 public class ArtistEntity extends BaseEntity implements Serializable {
 
     @Id
@@ -34,7 +32,7 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AlbumEntity> albums;
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartEntity> carts;
 
     @Column(name = "DESCRIPTION")

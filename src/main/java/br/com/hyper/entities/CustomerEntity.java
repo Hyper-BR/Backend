@@ -52,8 +52,8 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @OneToMany(mappedBy = "customer")
     private List<ArtistEntity> artistProfiles;
 
-    @OneToMany(mappedBy = "customer")
-    private List<PlaylistEntity> playlists;
+//    @OneToMany(mappedBy = "customer")
+//    private List<PlaylistEntity> playlists;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

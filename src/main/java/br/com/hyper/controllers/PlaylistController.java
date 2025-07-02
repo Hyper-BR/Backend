@@ -50,7 +50,7 @@ public class PlaylistController {
     }
 
     @GetMapping(value = "/playlist/customer")
-    public ResponseEntity<List<PlaylistResponseDTO>> find(@AuthenticationPrincipal CustomerEntity customer) {
+    public ResponseEntity<List<PlaylistResponseDTO>> findByCustomer(@AuthenticationPrincipal CustomerEntity customer) {
 
         List<PlaylistResponseDTO> response = playlistService.findByCustomer(customer.getId());
 
@@ -58,9 +58,7 @@ public class PlaylistController {
     }
 
     @PutMapping(value = "/playlist/{id}")
-    public ResponseEntity<PlaylistResponseDTO> updateName(
-                                                            @PathVariable Long id,
-                                                            @RequestBody @Valid PlaylistRequestDTO playlist) {
+    public ResponseEntity<PlaylistResponseDTO> update(@PathVariable Long id, @RequestBody @Valid PlaylistRequestDTO playlist) {
 
         PlaylistResponseDTO response = playlistService.updateName(id, playlist.getName());
 
