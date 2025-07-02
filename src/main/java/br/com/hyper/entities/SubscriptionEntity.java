@@ -7,24 +7,22 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Data
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "SUBSCRIPTION")
-@EqualsAndHashCode(callSuper = false)
+@Table(name = "SUBSCRIPTIONS")
 public class SubscriptionEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SUBSCRIPTION_SEQ")
-    @SequenceGenerator(name = "SUBSCRIPTION_SEQ", sequenceName = "SUBSCRIPTION_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SUBSCRIPTIONS_SEQ")
+    @SequenceGenerator(name = "SUBSCRIPTIONS_SEQ", sequenceName = "SUBSCRIPTIONS_SEQ", allocationSize = 1)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "_OPTION", nullable = false)
-    private SubscriptionOption option;
+    @Column(name = "PLAN", nullable = false)
+    private SubscriptionOption plan;
 
     @Column(name = "PRICE", nullable = false)
     private BigDecimal price;

@@ -1,7 +1,6 @@
 package br.com.hyper.dtos.requests;
 
-import br.com.hyper.entities.CustomerEntity;
-import br.com.hyper.entities.TrackEntity;
+import br.com.hyper.entities.ReleaseEntity;
 import lombok.Data;
 
 @Data
@@ -11,5 +10,5 @@ public class ReviewRequestDTO {
 
     private float score;
 
-    private TrackEntity trackId;
+    private ReleaseEntity trackId;
 }

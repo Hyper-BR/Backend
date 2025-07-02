@@ -11,10 +11,10 @@ import java.io.Serializable;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "TRACK")
+@Table(name = "RELEASE")
 @Builder
 @EqualsAndHashCode(callSuper = false)
-public class TrackEntity extends BaseEntity implements Serializable {
+public class ReleaseEntity extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRACK_SEQ")

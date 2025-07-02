@@ -51,7 +51,6 @@ public class ArtistServiceImpl implements ArtistService {
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setCustomer(customer);
-            artist.setCredits(0);
             artistRepository.save(artist);
 
             CartEntity cart = new CartEntity();
@@ -64,12 +63,6 @@ public class ArtistServiceImpl implements ArtistService {
 
             cartRepository.save(cart);
 
-//            List<ArtistEntity> artists = customer.getArtistProfiles();
-//            artists.add(artist);
-//            customer.setRole(UserRole.ARTIST);
-//            customer.setArtistProfiles(artists);
-//            customerRepository.save(customer);
-
             return modelMapper.map(artist, ArtistResponseDTO.class);
         } catch (DataIntegrityViolationException e) {
             throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
@@ -77,12 +70,12 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public ArtistPageResponseDTO find(List<String> username, Pageable pageable) {
+    public ArtistPageResponseDTO find(List<String> names, Pageable pageable) {
 
         Page<ArtistEntity> artistEntities;
 
-        if(username != null){
-            artistEntities = artistRepository.findByUsernamePage(username, pageable);
+        if(names != null){
+            artistEntities = artistRepository.findByUsernamePage(names, pageable);
         } else {
             artistEntities = artistRepository.findAll(pageable);
         }

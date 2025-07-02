@@ -25,7 +25,7 @@ public class ReviewEntity extends BaseEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private TrackEntity track;
+    private ReleaseEntity track;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER", nullable = false)

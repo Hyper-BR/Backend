@@ -6,10 +6,10 @@ import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.responses.pages.PlaylistPageReponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.PlaylistEntity;
-import br.com.hyper.entities.TrackEntity;
+import br.com.hyper.entities.ReleaseEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.exceptions.TrackException;
-import br.com.hyper.repositories.TrackRepository;
+import br.com.hyper.repositories.ReleaseRepository;
 import br.com.hyper.repositories.PlaylistRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     private PlaylistRepository playlistRepository;
 
     @Autowired
-    private TrackRepository trackRepository;
+    private ReleaseRepository releaseRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -116,7 +116,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public PlaylistResponseDTO addTrack(Long id, Long trackId) {
         PlaylistEntity playlist = findByIdOrThrowPlaylistDataNotFoundException(id);
-        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
+        ReleaseEntity track = findByIdOrThrowTrackDataNotFoundException(id);
         playlist.getTracks().add(track);
         return modelMapper.map(playlist, PlaylistResponseDTO.class);
     }
@@ -136,8 +136,8 @@ public class PlaylistServiceImpl implements PlaylistService {
         return playlistRepository.findById(id).orElseThrow(
                 () -> new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
-    private TrackEntity findByIdOrThrowTrackDataNotFoundException(Long id) {
-        return trackRepository.findById(id).orElseThrow(
+    private ReleaseEntity findByIdOrThrowTrackDataNotFoundException(Long id) {
+        return releaseRepository.findById(id).orElseThrow(
                 () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 }

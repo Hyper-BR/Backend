@@ -5,12 +5,12 @@ import br.com.hyper.dtos.requests.CartRequestDTO;
 import br.com.hyper.dtos.responses.CartResponseDTO;
 import br.com.hyper.dtos.responses.pages.CartPageResponseDTO;
 import br.com.hyper.entities.CartEntity;
-import br.com.hyper.entities.TrackEntity;
+import br.com.hyper.entities.ReleaseEntity;
 import br.com.hyper.exceptions.CartNotFoundException;
 import br.com.hyper.exceptions.InvalidCartDataException;
 import br.com.hyper.exceptions.TrackException;
 import br.com.hyper.repositories.CartRepository;
-import br.com.hyper.repositories.TrackRepository;
+import br.com.hyper.repositories.ReleaseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,7 +29,7 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
 
     @Autowired
-    private final TrackRepository trackRepository;
+    private final ReleaseRepository releaseRepository;
 
     @Autowired
     private final ModelMapper modelMapper;
@@ -57,7 +57,7 @@ public class CartServiceImpl implements CartService {
         try {
 
             CartEntity cart = findByIdOrThrowCartDataNotFoundException(cartId);
-            TrackEntity track = findByIdOrThrowTrackNotFoundException(trackId);
+            ReleaseEntity track = findByIdOrThrowTrackNotFoundException(trackId);
 
             if(cart.getTracks().contains(track)) {
                 throw new TrackException(ErrorCodes.DUPLICATED_DATA,
@@ -109,8 +109,8 @@ public class CartServiceImpl implements CartService {
                 () -> new CartNotFoundException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 
-    private TrackEntity findByIdOrThrowTrackNotFoundException(Long id) {
-        return trackRepository.findById(id).orElseThrow(
+    private ReleaseEntity findByIdOrThrowTrackNotFoundException(Long id) {
+        return releaseRepository.findById(id).orElseThrow(
                 () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 }

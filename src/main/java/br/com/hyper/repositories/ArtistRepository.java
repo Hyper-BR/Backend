@@ -13,11 +13,11 @@ import java.util.Optional;
 @Repository
 public interface ArtistRepository extends BaseRepository<ArtistEntity> {
 
-    @Query("SELECT o FROM ArtistEntity o WHERE username in :usernames")
-    Page<ArtistEntity> findByUsernamePage(@Param("usernames") List<String> usernames,
+    @Query("SELECT o FROM ArtistEntity o WHERE name in :names")
+    Page<ArtistEntity> findByUsernamePage(@Param("names") List<String> names,
                                           Pageable pageable);
 
-    @Query("SELECT o FROM ArtistEntity o WHERE username = :username")
-    Optional<ArtistEntity> findByUsername(@Param("username") String username);
+    @Query("SELECT o FROM ArtistEntity o WHERE name = :name")
+    Optional<ArtistEntity> findByUsername(@Param("name") String name);
 
 }

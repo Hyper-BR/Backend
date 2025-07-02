@@ -11,30 +11,30 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ARTIST")
+@Table(name = "ARTISTS")
 public class ArtistEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ARTIST_SEQ")
-    @SequenceGenerator(name = "ARTIST_SEQ", sequenceName = "ARTIST_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ARTISTS_SEQ")
+    @SequenceGenerator(name = "ARTISTS_SEQ", sequenceName = "ARTISTS_SEQ", allocationSize = 1)
     private Long id;
 
-    @Column(name = "CREDITS", nullable = false)
-    private int credits;
-
-    @Column(name = "USERNAME", nullable = false, unique = true)
-    private String username;
+    @Column(name = "NAME", nullable = false, unique = true)
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CUSTOMER", nullable = false)
     private CustomerEntity customer;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<AlbumEntity> albums;
+    @Column(name = "PROFILE_IMAGE")
+    private String profileImage;
+
+    @Column(name = "IS_VERIFIED", nullable = false)
+    private Boolean isVerified;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartEntity> carts;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "BIO")
+    private String bio;
 }

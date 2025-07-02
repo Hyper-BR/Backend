@@ -34,12 +34,12 @@ public class AlbumEntity extends BaseEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RECORD", nullable = false)
-    private RecordEntity recordId;
+    private RecordEntity record;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ARTIST")
     private ArtistEntity artist;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TrackEntity> tracks;
+    private List<ReleaseEntity> tracks;
 }

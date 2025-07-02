@@ -16,15 +16,15 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "CUSTOMER")
+@Table(name = "CUSTOMERS")
 public class CustomerEntity extends BaseEntity implements Serializable, UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CUSTOMER_SEQ")
-    @SequenceGenerator(name = "CUSTOMER_SEQ", sequenceName = "CUSTOMER_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CUSTOMERS_SEQ")
+    @SequenceGenerator(name = "CUSTOMERS_SEQ", sequenceName = "CUSTOMERS_SEQ", allocationSize = 1)
     private Long id;
 
-    @Column(name = "AVATAR")
+    @Column(name = "AVATAR_URL")
     private String avatar;
 
     @Column(name = "NAME", nullable = false)
@@ -50,7 +50,7 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     private UserRole role;
 
     @OneToMany(mappedBy = "customer")
-    private List<ArtistEntity> artistProfiles;
+    private List<ArtistEntity> artists;
 
 //    @OneToMany(mappedBy = "customer")
 //    private List<PlaylistEntity> playlists;
