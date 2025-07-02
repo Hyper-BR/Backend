@@ -1,11 +1,13 @@
 package br.com.hyper.entities;
 
+import br.com.hyper.enums.ReleaseType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Getter
@@ -23,25 +25,25 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "NAME", nullable = false)
-    private String name;
+    @Column(name = "TITLE", nullable = false)
+    private String title;
 
-    @Column(name = "DURATION", nullable = false)
-    private float size;
+    @Column(name = "TYPE", nullable = false)
+    private ReleaseType type;
 
-    @Column(name = "GENRE", nullable = false)
-    private String genre;
-
-    @Column(name = "PRICE", nullable = false)
-    private int price;
-
-    @Column(name = "IMAGE", nullable = false)
-    private String image;
+    @Column(name = "COVER_URL", nullable = false)
+    private String coverUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ARTIST", nullable = false)
+    @JoinColumn(name = "ARTIST_ID", nullable = false)
     private ArtistEntity artist;
 
-    @Column(name = "PATH", nullable = false)
-    private String path;
+    @Column(name = "UPC", nullable = false)
+    private String upc;
+
+    @Column(name = "RELEASE_DATE", nullable = false)
+    private ZonedDateTime releaseDate;
+
+    @Column(name = "STATUS", nullable = false)
+    private ZonedDateTime status;
 }

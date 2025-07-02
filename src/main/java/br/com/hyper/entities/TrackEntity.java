@@ -27,9 +27,6 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "RELEASE_ID", nullable = false)
-    private ReleaseEntity release;
-
     @Column(name = "DURATION", nullable = false)
     private LocalTime duration;
 
@@ -50,4 +47,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
 
     @Column(name = "FILE_URL", nullable = false)
     private String fileUrl;
+
+    @Column(name = "RELEASE_ID", nullable = false)
+    private ReleaseEntity release;
 }

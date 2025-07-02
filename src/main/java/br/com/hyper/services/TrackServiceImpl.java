@@ -1,14 +1,15 @@
 package br.com.hyper.services;
 
 import br.com.hyper.dtos.responses.pages.TrackPageResponseDTO;
+import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.TrackException;
-import br.com.hyper.repositories.ReleaseRepository;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.ArtistEntity;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.entities.ReleaseEntity;
 import br.com.hyper.repositories.ArtistRepository;
+import br.com.hyper.repositories.TrackRepository;
 import br.com.hyper.utils.AmazonBucketS3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ import java.util.List;
 public class TrackServiceImpl implements TrackService {
 
     @Autowired
-    private final ReleaseRepository releaseRepository;
+    private final TrackRepository trackRepository;
 
     @Autowired
     private final ArtistRepository artistRepository;
@@ -48,20 +49,18 @@ public class TrackServiceImpl implements TrackService {
 
         ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(artistId);
 
-        ReleaseEntity releaseEntity = ReleaseEntity.builder()
-                .name(track.getName())
-                .size(track.getFile().getSize() / 1024f)
+        TrackEntity trackEntity = TrackEntity.builder()
+                .title(track.getName())
                 .price(3)
-                .image(track.getImage())
                 .genre(track.getGenre())
-                .artist(artist)
-                .path(artist.getName() + "/" + track.getGenre() + "/" + track.getName())
+                .release(new ReleaseEntity())
+                .fileUrl(artist.getName() + "/" + track.getGenre() + "/" + track.getName())
                 .build();
 
         // Salva a track localmente - remover
 
         try {
-            Path outputPath = Paths.get("uploads", releaseEntity.getPath() + ".mp3");
+            Path outputPath = Paths.get("uploads", trackEntity.getTitle() + ".mp3");
             Files.createDirectories(outputPath.getParent());
             try (InputStream inputStream = track.getFile().getInputStream()) {
                 Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
@@ -73,21 +72,20 @@ public class TrackServiceImpl implements TrackService {
         // Salva a track no S3
 //        amazonBucketS3.uploadArtistTrack(trackEntity.getPath(), track.getFile());
 
-        releaseRepository.save(releaseEntity);
 
-        return modelMapper.map(releaseEntity, TrackResponseDTO.class);
+        return modelMapper.map(trackEntity, TrackResponseDTO.class);
 
     }
 
     @Override
     public TrackPageResponseDTO find(List<String> genres, Pageable pageable) {
 
-        Page<ReleaseEntity> trackEntities;
+        Page<TrackEntity> trackEntities;
 
         if(genres != null){
-            trackEntities = releaseRepository.findByGenres(genres, pageable);
+            trackEntities = trackRepository.findByGenres(genres, pageable);
         } else {
-            trackEntities = releaseRepository.findAll(pageable);
+            trackEntities = trackRepository.findAll(pageable);
         }
 
         return modelMapper.map(trackEntities, TrackPageResponseDTO.class);
@@ -96,7 +94,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public TrackResponseDTO findById(Long id) {
 
-        ReleaseEntity track = findByIdOrThrowTrackDataNotFoundException(id);
+        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 
         return modelMapper.map(track, TrackResponseDTO.class);
     }
@@ -104,33 +102,33 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public TrackResponseDTO update(Long id, TrackRequestDTO track) {
-        ReleaseEntity trackCurrent = findByIdOrThrowTrackDataNotFoundException(id);
+        TrackEntity trackCurrent = findByIdOrThrowTrackDataNotFoundException(id);
 
-        trackCurrent.setName(track.getName());
-        trackCurrent.setGenre(track.getGenre());
-        trackCurrent.setImage(track.getImage());
-        trackCurrent.setSize(track.getFile().getSize() / 1024f);
-        trackCurrent.setPath(trackCurrent.getArtist().getName() + "/" + track.getGenre() + "/" + track.getName());
+//        trackCurrent.setName(track.getName());
+//        trackCurrent.setGenre(track.getGenre());
+//        trackCurrent.setImage(track.getImage());
+//        trackCurrent.setSize(track.getFile().getSize() / 1024f);
+//        trackCurrent.setPath(trackCurrent.getArtist().getName() + "/" + track.getGenre() + "/" + track.getName());
 
-        releaseRepository.save(trackCurrent);
+        trackRepository.save(trackCurrent);
 
         return modelMapper.map(trackCurrent, TrackResponseDTO.class);
     }
 
     @Override
     public void delete(Long id) {
-        ReleaseEntity musicCurrent = findByIdOrThrowTrackDataNotFoundException(id);
+        TrackEntity musicCurrent = findByIdOrThrowTrackDataNotFoundException(id);
 
-        releaseRepository.delete(musicCurrent);
+        trackRepository.delete(musicCurrent);
     }
 
 
     public byte[] downloadTrack(Long id) {
 
-        ReleaseEntity track = findByIdOrThrowTrackDataNotFoundException(id);
+        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 //        return amazonBucketS3.downloadTrack(track.getPath());
 
-        Path filePath = Paths.get("uploads", track.getPath() + ".mp3");
+        Path filePath = Paths.get("uploads", track.getTitle() + ".mp3");
         try {
             return Files.readAllBytes(filePath);
         } catch (IOException e) {
@@ -140,14 +138,14 @@ public class TrackServiceImpl implements TrackService {
 
     public String getTrackUrl(Long id) {
 
-        ReleaseEntity track = findByIdOrThrowTrackDataNotFoundException(id);
+        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 
 //        return amazonBucketS3.getTrackUrl(track.getPath());
-        return Paths.get("uploads", track.getPath() + ".mp3").toString();
+        return Paths.get("uploads", track.getTitle() + ".mp3").toString();
     }
 
-    private ReleaseEntity findByIdOrThrowTrackDataNotFoundException(Long id) {
-        return releaseRepository.findById(id).orElseThrow(
+    private TrackEntity findByIdOrThrowTrackDataNotFoundException(Long id) {
+        return trackRepository.findById(id).orElseThrow(
                 () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 
