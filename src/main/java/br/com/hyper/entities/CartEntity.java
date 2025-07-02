@@ -15,7 +15,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "CART")
+@Table(name = "CARTS")
 public class CartEntity extends BaseEntity implements Serializable {
 
     @Id

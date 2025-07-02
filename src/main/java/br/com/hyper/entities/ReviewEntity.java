@@ -26,10 +26,10 @@ public class ReviewEntity extends BaseEntity implements Serializable {
     private float score;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "TRACK_ID", nullable = false)
     private ReleaseEntity track;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER", nullable = false)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private CustomerEntity customer;
 }

@@ -24,7 +24,7 @@ public class OrderEntity extends BaseEntity implements Serializable {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER", nullable = false)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private CustomerEntity customer;
 
     @Column(name = "TOTAL_ITEMS", nullable = false)
