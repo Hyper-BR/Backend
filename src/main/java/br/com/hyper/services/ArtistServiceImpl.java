@@ -1,11 +1,7 @@
 package br.com.hyper.services;
 
 import br.com.hyper.constants.ErrorCodes;
-import br.com.hyper.dtos.requests.CartRequestDTO;
-import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.pages.ArtistPageResponseDTO;
-import br.com.hyper.entities.CartEntity;
-import br.com.hyper.enums.UserRole;
 import br.com.hyper.exceptions.ArtistNotFoundException;
 import br.com.hyper.exceptions.InvalidArtistDataException;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
@@ -13,7 +9,6 @@ import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.exceptions.CustomerException;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
 import br.com.hyper.repositories.ArtistRepository;
-import br.com.hyper.repositories.CartRepository;
 import br.com.hyper.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import br.com.hyper.entities.ArtistEntity;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -42,9 +36,6 @@ public class ArtistServiceImpl implements ArtistService {
     @Autowired
     private final CustomerRepository customerRepository;
 
-    @Autowired
-    private final CartRepository cartRepository;
-
     @Override
     public ArtistResponseDTO save(ArtistRequestDTO artistDTO, CustomerEntity  customer) {
         try {
@@ -52,16 +43,6 @@ public class ArtistServiceImpl implements ArtistService {
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setCustomer(customer);
             artistRepository.save(artist);
-
-            CartEntity cart = new CartEntity();
-            cart.setName("Principal");
-            cart.setTotalItems(0);
-            cart.setTotalPrice(BigDecimal.ZERO);
-            cart.setArtist(artist);
-
-            artist.setCarts(List.of(cart));
-
-            cartRepository.save(cart);
 
             return modelMapper.map(artist, ArtistResponseDTO.class);
         } catch (DataIntegrityViolationException e) {
@@ -88,22 +69,6 @@ public class ArtistServiceImpl implements ArtistService {
         ArtistEntity artistCurrent = findByIdOrThrowArtistDataNotFoundException(id);
 
         artistRepository.delete(artistCurrent);
-    }
-
-    @Override
-    public ArtistResponseDTO addCart(Long id, CartRequestDTO cartRequestDTO) {
-        ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(id);
-
-        CartEntity cart = modelMapper.map(cartRequestDTO, CartEntity.class);
-        cart.setTotalItems(0);
-        cart.setTotalPrice(BigDecimal.ZERO);
-        cart.setArtist(artist);
-
-        artist.getCarts().add(cart);
-
-        cartRepository.save(cart);
-
-        return modelMapper.map(artist, ArtistResponseDTO.class);
     }
 
     private ArtistEntity findByIdOrThrowArtistDataNotFoundException(Long id) {

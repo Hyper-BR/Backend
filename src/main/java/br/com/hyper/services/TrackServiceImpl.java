@@ -10,7 +10,6 @@ import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.entities.ReleaseEntity;
 import br.com.hyper.repositories.ArtistRepository;
 import br.com.hyper.repositories.TrackRepository;
-import br.com.hyper.utils.AmazonBucketS3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -40,9 +39,6 @@ public class TrackServiceImpl implements TrackService {
 
     @Autowired
     private final ModelMapper modelMapper;
-
-    @Autowired
-    private final AmazonBucketS3 amazonBucketS3;
 
     @Override
     public TrackResponseDTO save(TrackRequestDTO track, Long artistId) throws IOException {

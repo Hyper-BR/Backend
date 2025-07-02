@@ -36,9 +36,6 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @Column(name = "IS_VERIFIED", nullable = false)
     private Boolean isVerified;
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CartEntity> carts;
-
     @Column(name = "BIO")
     private String bio;
 }
