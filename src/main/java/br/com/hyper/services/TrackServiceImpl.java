@@ -1,37 +1,40 @@
 package br.com.hyper.services;
 
-import br.com.hyper.dtos.responses.pages.PlaylistPageReponseDTO;
-import br.com.hyper.dtos.responses.pages.TrackPageResponseDTO;
-import br.com.hyper.entities.PlaylistEntity;
+import br.com.hyper.dtos.PageResponseDTO;
+import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.TrackEntity;
-import br.com.hyper.repositories.ReleaseRepository;
 import br.com.hyper.repositories.TrackRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TrackServiceImpl implements TrackService {
 
-    @Autowired
     private final TrackRepository trackRepository;
-
-    @Autowired
     private final ModelMapper modelMapper;
 
     @Override
-    public TrackPageResponseDTO find(Pageable pageable) {
+    public PageResponseDTO<TrackResponseDTO> find(Pageable pageable) {
+        Page<TrackEntity> page = trackRepository.findAll(pageable);
 
-        Page<TrackEntity> trackEntities;
+        List<TrackResponseDTO> content = page.getContent().stream()
+                .map(track -> modelMapper.map(track, TrackResponseDTO.class))
+                .toList();
 
-        trackEntities = trackRepository.findAll(pageable);
-
-        return modelMapper.map(trackEntities, TrackPageResponseDTO.class);
+        return PageResponseDTO.<TrackResponseDTO>builder()
+                .content(content)
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .build();
     }
 }

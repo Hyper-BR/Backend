@@ -1,6 +1,5 @@
 package br.com.hyper.repositories;
 
-import br.com.hyper.entities.ReleaseEntity;
 import br.com.hyper.entities.TrackEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

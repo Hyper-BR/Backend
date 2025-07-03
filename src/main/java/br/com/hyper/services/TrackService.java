@@ -1,10 +1,11 @@
 package br.com.hyper.services;
 
-import br.com.hyper.dtos.responses.pages.TrackPageResponseDTO;
+import br.com.hyper.dtos.PageResponseDTO;
+import br.com.hyper.dtos.responses.TrackResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 public interface TrackService {
 
-    TrackPageResponseDTO find(Pageable pageable);
+    PageResponseDTO<TrackResponseDTO> find(Pageable pageable);
 
 }

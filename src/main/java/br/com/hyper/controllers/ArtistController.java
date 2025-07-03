@@ -1,11 +1,8 @@
 package br.com.hyper.controllers;
 
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
-import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
-import br.com.hyper.dtos.responses.CustomerResponseDTO;
-import br.com.hyper.dtos.responses.pages.ArtistPageResponseDTO;
-import br.com.hyper.dtos.responses.pages.CustomerPageResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.ArtistService;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +36,13 @@ public class ArtistController {
     }
 
     @GetMapping(value = "/artist")
-    public ResponseEntity<ArtistPageResponseDTO> find(
+    public ResponseEntity<PageResponseDTO<ArtistResponseDTO>> find(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value = "sort", defaultValue = "UNSORT", required = false) String sort,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        ArtistPageResponseDTO response = artistService.find(null, pageable);
+        PageResponseDTO<ArtistResponseDTO> response = artistService.find(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

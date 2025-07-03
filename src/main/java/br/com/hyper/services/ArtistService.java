@@ -1,8 +1,8 @@
 package br.com.hyper.services;
 
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
-import br.com.hyper.dtos.responses.pages.ArtistPageResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +13,7 @@ public interface ArtistService {
 
     ArtistResponseDTO save(ArtistRequestDTO artist, CustomerEntity customer);
 
-    ArtistPageResponseDTO find(List<String> names, Pageable pageable);
+    PageResponseDTO<ArtistResponseDTO> find(Pageable pageable);
 
     void delete(UUID id);
 }

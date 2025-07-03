@@ -1,6 +1,6 @@
 package br.com.hyper.services;
 
-import br.com.hyper.dtos.responses.pages.PlaylistPageReponseDTO;
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
 import br.com.hyper.entities.CustomerEntity;
@@ -13,7 +13,7 @@ public interface PlaylistService {
 
     PlaylistResponseDTO save(PlaylistRequestDTO playlist, CustomerEntity customerId);
 
-    PlaylistPageReponseDTO find(String name, Pageable pageable);
+    PageResponseDTO<PlaylistResponseDTO> find(Pageable pageable);
 
     List<PlaylistResponseDTO> findByCustomer(UUID id);
 

@@ -1,9 +1,10 @@
 package br.com.hyper.services;
 
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.LoginRequestDTO;
 import br.com.hyper.dtos.responses.LoginResponseDTO;
+import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.responses.TokenResponseDTO;
-import br.com.hyper.dtos.responses.pages.CustomerPageResponseDTO;
 import br.com.hyper.entities.SubscriptionEntity;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
@@ -14,6 +15,7 @@ import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.repositories.SubscriptionRepository;
 import br.com.hyper.utils.CustomerTokenUtil;
+import br.com.hyper.utils.PaginationMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -122,11 +124,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerPageResponseDTO findAll(Pageable pageable) {
+    public PageResponseDTO<CustomerResponseDTO> findAll(Pageable pageable) {
 
         Page<CustomerEntity> customerEntities = customerRepository.findAll(pageable);
 
-        return modelMapper.map(customerEntities, CustomerPageResponseDTO.class);
+        return PaginationMapper.map(customerEntities, CustomerResponseDTO.class);
     }
 
     @Override

@@ -1,15 +1,15 @@
 package br.com.hyper.services;
 
 import br.com.hyper.constants.ErrorCodes;
-import br.com.hyper.dtos.responses.pages.ArtistPageResponseDTO;
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.exceptions.ArtistNotFoundException;
 import br.com.hyper.exceptions.InvalidArtistDataException;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
 import br.com.hyper.entities.CustomerEntity;
-import br.com.hyper.exceptions.CustomerException;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
 import br.com.hyper.repositories.ArtistRepository;
 import br.com.hyper.repositories.CustomerRepository;
+import br.com.hyper.utils.PaginationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -54,17 +54,11 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public ArtistPageResponseDTO find(List<String> names, Pageable pageable) {
+    public PageResponseDTO<ArtistResponseDTO> find(Pageable pageable) {
 
-        Page<ArtistEntity> artistEntities;
+        Page<ArtistEntity> entities = artistRepository.findAll(pageable);
 
-        if(names != null){
-            artistEntities = artistRepository.findByUsernamePage(names, pageable);
-        } else {
-            artistEntities = artistRepository.findAll(pageable);
-        }
-
-        return modelMapper.map(artistEntities, ArtistPageResponseDTO.class);
+        return PaginationMapper.map(entities, ArtistResponseDTO.class);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package br.com.hyper.controllers;
 
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
-import br.com.hyper.dtos.responses.pages.PlaylistPageReponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.PlaylistService;
 import lombok.RequiredArgsConstructor;
@@ -37,15 +37,13 @@ public class PlaylistController {
     }
 
     @GetMapping(value = "/playlist")
-    public ResponseEntity<PlaylistPageReponseDTO> find(
-            @RequestParam(value = "name", required = false) String name,
+    public ResponseEntity<PageResponseDTO<PlaylistResponseDTO>> find(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value = "sort", defaultValue = "UNSORT", required = false) String sort,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        PlaylistPageReponseDTO response = playlistService.find(name, pageable);
+        PageResponseDTO<PlaylistResponseDTO> response = playlistService.find(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

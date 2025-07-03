@@ -1,8 +1,8 @@
 package br.com.hyper.controllers;
 
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.LoginRequestDTO;
 import br.com.hyper.dtos.responses.LoginResponseDTO;
-import br.com.hyper.dtos.responses.pages.CustomerPageResponseDTO;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
@@ -62,14 +62,13 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/customer")
-    public ResponseEntity<CustomerPageResponseDTO> find(
+    public ResponseEntity<PageResponseDTO<CustomerResponseDTO>> find(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value = "sort", defaultValue = "UNSORT", required = false) String sort,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        CustomerPageResponseDTO response = customerService.findAll(pageable);
+        PageResponseDTO<CustomerResponseDTO> response = customerService.findAll(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

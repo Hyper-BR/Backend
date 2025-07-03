@@ -1,9 +1,10 @@
 package br.com.hyper.services;
 
 import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
+import br.com.hyper.dtos.responses.ArtistResponseDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
-import br.com.hyper.dtos.responses.pages.PlaylistPageReponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.PlaylistEntity;
 import br.com.hyper.entities.ReleaseEntity;
@@ -11,6 +12,7 @@ import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.exceptions.TrackException;
 import br.com.hyper.repositories.ReleaseRepository;
 import br.com.hyper.repositories.PlaylistRepository;
+import br.com.hyper.utils.PaginationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -61,17 +63,11 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public PlaylistPageReponseDTO find(String name, Pageable pageable) {
+    public PageResponseDTO<PlaylistResponseDTO> find(Pageable pageable) {
 
-        Page<PlaylistEntity> playlistEntities;
+        Page<PlaylistEntity> playlistEntities = playlistRepository.findAll(pageable);
 
-        if(name != null){
-            playlistEntities = playlistRepository.findByName(name, pageable);
-        } else {
-            playlistEntities = playlistRepository.findAll(pageable);
-        }
-
-        return modelMapper.map(playlistEntities, PlaylistPageReponseDTO.class);
+        return PaginationMapper.map(playlistEntities, PlaylistResponseDTO.class);
     }
 
     @Override
