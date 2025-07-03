@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -74,7 +75,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public List<PlaylistResponseDTO> findByCustomer(Long id) {
+    public List<PlaylistResponseDTO> findByCustomer(UUID id) {
         List<PlaylistEntity> playlists;
 
         if (id == null) {

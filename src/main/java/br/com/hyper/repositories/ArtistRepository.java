@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface ArtistRepository extends BaseRepository<ArtistEntity> {
@@ -19,5 +20,8 @@ public interface ArtistRepository extends BaseRepository<ArtistEntity> {
 
     @Query("SELECT o FROM ArtistEntity o WHERE name = :name")
     Optional<ArtistEntity> findByUsername(@Param("name") String name);
+
+    @Query("SELECT o FROM ArtistEntity o WHERE id = :id")
+    Optional<ArtistEntity> findById(@Param("id") UUID id);
 
 }

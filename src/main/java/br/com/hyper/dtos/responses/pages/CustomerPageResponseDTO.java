@@ -1,6 +1,5 @@
 package br.com.hyper.dtos.responses.pages;
 
-import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

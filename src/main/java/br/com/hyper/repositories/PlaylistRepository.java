@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface PlaylistRepository extends BaseRepository<PlaylistEntity> {
@@ -17,6 +18,6 @@ public interface PlaylistRepository extends BaseRepository<PlaylistEntity> {
                                     Pageable pageable);
 
     @Query("SELECT o FROM PlaylistEntity o WHERE o.customer.id = :customerId")
-    List<PlaylistEntity> findByCustomerId(@Param("customerId") Long customerId);
+    List<PlaylistEntity> findByCustomerId(@Param("customerId") UUID customerId);
 
 }

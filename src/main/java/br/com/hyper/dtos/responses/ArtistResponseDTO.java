@@ -2,13 +2,12 @@ package br.com.hyper.dtos.responses;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class ArtistResponseDTO {
 
-    private Long id;
+    private UUID id;
 
-    private String username;
-
-    private int credits;
-
+    private String name;
 }

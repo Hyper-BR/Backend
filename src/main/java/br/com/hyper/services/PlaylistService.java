@@ -7,6 +7,7 @@ import br.com.hyper.entities.CustomerEntity;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PlaylistService {
 
@@ -14,7 +15,7 @@ public interface PlaylistService {
 
     PlaylistPageReponseDTO find(String name, Pageable pageable);
 
-    List<PlaylistResponseDTO> findByCustomer(Long id);
+    List<PlaylistResponseDTO> findByCustomer(UUID id);
 
     PlaylistResponseDTO update(Long id, PlaylistRequestDTO playlist);
 

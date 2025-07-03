@@ -7,6 +7,7 @@ import br.com.hyper.entities.CustomerEntity;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ArtistService {
 
@@ -14,5 +15,5 @@ public interface ArtistService {
 
     ArtistPageResponseDTO find(List<String> names, Pageable pageable);
 
-    void delete(Long id);
+    void delete(UUID id);
 }

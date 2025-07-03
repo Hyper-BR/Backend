@@ -21,10 +21,8 @@ import java.util.UUID;
 public class RoyaltyEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @JdbcTypeCode(SqlTypes.UUID)
-    @Column(name = "ID", updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "TRACK_ID", nullable = false)

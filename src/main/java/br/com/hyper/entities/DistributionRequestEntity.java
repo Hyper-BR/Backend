@@ -2,13 +2,9 @@ package br.com.hyper.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,10 +16,8 @@ import java.util.UUID;
 public class DistributionRequestEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @JdbcTypeCode(SqlTypes.UUID)
-    @Column(name = "ID", updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "RELEASE_ID", nullable = false)

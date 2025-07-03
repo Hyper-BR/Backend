@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import br.com.hyper.entities.ArtistEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -41,7 +42,9 @@ public class ArtistServiceImpl implements ArtistService {
         try {
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
+            artist.setName(artistDTO.getName().trim());
             artist.setCustomer(customer);
+            artist.setIsVerified(false);
             artistRepository.save(artist);
 
             return modelMapper.map(artist, ArtistResponseDTO.class);
@@ -65,20 +68,15 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         ArtistEntity artistCurrent = findByIdOrThrowArtistDataNotFoundException(id);
 
         artistRepository.delete(artistCurrent);
     }
 
-    private ArtistEntity findByIdOrThrowArtistDataNotFoundException(Long id) {
+    private ArtistEntity findByIdOrThrowArtistDataNotFoundException(UUID id) {
         return artistRepository.findById(id).orElseThrow(
                 () -> new ArtistNotFoundException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
-    }
-
-    private CustomerEntity findByEmailOrThrowUserDataNotFoundException(String email) {
-        return customerRepository.findByEmail(email).orElseThrow(
-                () -> new CustomerException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 
 }

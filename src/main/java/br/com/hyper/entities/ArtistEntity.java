@@ -27,7 +27,7 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER", nullable = false)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private CustomerEntity customer;
 
     @Column(name = "PROFILE_IMAGE")
@@ -36,6 +36,6 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @Column(name = "IS_VERIFIED", nullable = false)
     private Boolean isVerified;
 
-    @Column(name = "BIO")
-    private String bio;
+    @Column(name = "BIOGRAPHY")
+    private String biography;
 }
