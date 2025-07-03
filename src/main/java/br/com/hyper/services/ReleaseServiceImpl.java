@@ -1,6 +1,7 @@
 package br.com.hyper.services;
 
 import br.com.hyper.dtos.requests.ReleaseRequestDTO;
+import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
@@ -43,22 +44,22 @@ import org.jaudiotagger.audio.AudioFileIO;
 @RequiredArgsConstructor
 public class ReleaseServiceImpl implements ReleaseService {
 
-    @Autowired
     private final TrackRepository trackRepository;
 
-    @Autowired
     private final ReleaseRepository releaseRepository;
 
-    @Autowired
     private final ArtistRepository artistRepository;
 
-    @Autowired
     private final ModelMapper modelMapper;
 
-    public ReleaseResponseDTO save(ReleaseRequestDTO releaseDTO, UUID artistId) {
+    public ReleaseResponseDTO save(ReleaseRequestDTO releaseDTO, CustomerEntity customer) {
         File tempFile;
         try {
-            ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(artistId);
+            if (releaseDTO.getFile() == null || releaseDTO.getFile().isEmpty()) {
+                throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "File is required for the release.");
+            }
+
+            ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
 
             tempFile = File.createTempFile("track_", ".mp3");
             releaseDTO.getFile().transferTo(tempFile);

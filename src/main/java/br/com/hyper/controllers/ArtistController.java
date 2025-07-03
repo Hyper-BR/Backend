@@ -27,7 +27,7 @@ public class ArtistController {
 
     private final ArtistService artistService;
 
-    @PostMapping(value = "/artist")
+    @PostMapping(value = "/artists")
     public ResponseEntity<ArtistResponseDTO> createArtist(@RequestBody @Valid ArtistRequestDTO artist,
                                                           @AuthenticationPrincipal CustomerEntity customer) {
 
@@ -36,7 +36,7 @@ public class ArtistController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping(value = "/artist")
+    @GetMapping(value = "/artists")
     public ResponseEntity<PageResponseDTO<ArtistResponseDTO>> find(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
@@ -48,7 +48,7 @@ public class ArtistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping(value = "/artist/{id}")
+    @PutMapping(value = "/artists/{id}")
     public ResponseEntity<ArtistResponseDTO> update(@PathVariable UUID id, @RequestBody ArtistRequestDTO artist) {
 
         ArtistResponseDTO response = artistService.update(id, artist);
@@ -56,7 +56,7 @@ public class ArtistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping(value = "/artist/{id}")
+    @DeleteMapping(value = "/artists/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
 
         artistService.delete(id);

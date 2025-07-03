@@ -1,15 +1,15 @@
 package br.com.hyper.controllers;
 
 import br.com.hyper.dtos.requests.ReleaseRequestDTO;
+import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.ReleaseService;
 import br.com.hyper.dtos.responses.ReleaseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -20,10 +20,10 @@ public class ReleaseController {
 
     @PostMapping(value = "/release", consumes = { "multipart/form-data" })
     public ResponseEntity<ReleaseResponseDTO> create(
-            @RequestParam(value = "artistId") UUID artistId,
-            @ModelAttribute(value = "release") ReleaseRequestDTO release) {
+            @ModelAttribute(value = "release") ReleaseRequestDTO release,
+            @AuthenticationPrincipal CustomerEntity customer) {
 
-        ReleaseResponseDTO response = releaseService.save(release, artistId);
+        ReleaseResponseDTO response = releaseService.save(release, customer);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
