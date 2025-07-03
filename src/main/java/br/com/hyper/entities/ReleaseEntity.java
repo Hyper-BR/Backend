@@ -1,5 +1,6 @@
 package br.com.hyper.entities;
 
+import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +9,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -29,14 +31,11 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     private String title;
 
     @Column(name = "TYPE", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ReleaseType type;
 
     @Column(name = "COVER_URL", nullable = false)
     private String coverUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ARTIST_ID", nullable = false)
-    private ArtistEntity artist;
 
     @Column(name = "UPC", nullable = false)
     private String upc;
@@ -45,5 +44,9 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     private ZonedDateTime releaseDate;
 
     @Column(name = "STATUS", nullable = false)
-    private ZonedDateTime status;
+    @Enumerated(EnumType.STRING)
+    private ReleaseStatus status;
+
+    @OneToMany(mappedBy = "release", cascade = CascadeType.ALL)
+    private List<TrackEntity> tracks;
 }

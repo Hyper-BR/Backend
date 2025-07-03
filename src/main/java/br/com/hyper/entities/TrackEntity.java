@@ -6,7 +6,9 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -28,7 +30,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
     private String title;
 
     @Column(name = "DURATION", nullable = false)
-    private LocalTime duration;
+    private Integer duration;
 
     @Column(name = "GENRE", nullable = false)
     private String genre;
@@ -48,6 +50,16 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "FILE_URL", nullable = false)
     private String fileUrl;
 
-    @Column(name = "RELEASE_ID", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "RELEASE_ID", nullable = false)
     private ReleaseEntity release;
+
+    @ManyToMany
+    @JoinTable(
+            name = "track_artists",
+            joinColumns = @JoinColumn(name = "track_id"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    private List<ArtistEntity> artists;
+
 }

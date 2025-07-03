@@ -8,11 +8,9 @@ import java.util.UUID;
 public class TrackResponseDTO {
 
     private UUID id;
-    private String name;
+    private String title;
     private Double duration;
     private String genre;
-    private String image;
-    private int price;
-    private String path;
-    private ArtistResponseDTO artist;
+    private String fileUrl;
+    private float price;
 }

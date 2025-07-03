@@ -1,6 +1,6 @@
 package br.com.hyper.dtos.responses.pages;
 
-import br.com.hyper.dtos.responses.TrackResponseDTO;
+import br.com.hyper.dtos.responses.ReleaseResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -25,5 +25,5 @@ public class TrackPageResponseDTO {
     private Integer number;
 
     @JsonProperty("tracks")
-    private List<TrackResponseDTO> content;
+    private List<ReleaseResponseDTO> content;
 }
