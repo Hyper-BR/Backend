@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,7 +25,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerController {
 
-    @Autowired
     private final CustomerService customerService;
 
     @PostMapping(value = "/customer")
@@ -35,22 +33,6 @@ public class CustomerController {
         CustomerResponseDTO response = customerService.save(customer);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PostMapping("/customer/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequest, HttpServletResponse http) {
-
-        LoginResponseDTO response = customerService.login(loginRequest, http);
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @PostMapping("/customer/refresh")
-    public ResponseEntity<LoginResponseDTO> refresh(@AuthenticationPrincipal CustomerEntity customer) {
-
-        LoginResponseDTO response = customerService.refresh(customer);
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping(value = "/customer/{email}")
