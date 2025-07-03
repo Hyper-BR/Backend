@@ -6,6 +6,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
@@ -36,7 +37,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
     private String genre;
 
     @Column(name = "PRICE", nullable = false)
-    private float price;
+    private BigDecimal price;
 
     @Column(name = "ISRC", nullable = false)
     private String isrc;

@@ -21,7 +21,7 @@ public interface PlaylistService {
 
     void delete(UUID id);
 
-    PlaylistResponseDTO updateName(UUID id, String name);
-
     PlaylistResponseDTO addTrack(UUID id, UUID trackId);
+
+    PlaylistResponseDTO removeTrack(UUID id, UUID trackId);
 }

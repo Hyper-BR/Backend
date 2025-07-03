@@ -14,5 +14,7 @@ public interface ArtistService {
 
     PageResponseDTO<ArtistResponseDTO> find(Pageable pageable);
 
+    ArtistResponseDTO update(UUID id, ArtistRequestDTO user);
+
     void delete(UUID id);
 }

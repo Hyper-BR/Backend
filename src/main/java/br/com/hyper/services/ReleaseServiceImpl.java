@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -86,7 +87,7 @@ public class ReleaseServiceImpl implements ReleaseService {
             track.setRelease(release);
             track.setDuration(durationInSeconds);
             track.setFileUrl(outputPath.toString());
-            track.setPrice(1.99f);
+            track.setPrice(BigDecimal.valueOf(1.99));
             track.setArtists(List.of(artist));
             track.setExplicit(false);
             track.setGenre(releaseDTO.getGenre());
@@ -109,7 +110,7 @@ private String sanitize(String input) {
 
     private ArtistEntity findByIdOrThrowArtistDataNotFoundException(UUID id) {
         return artistRepository.findById(id).orElseThrow(
-                () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
+                () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, "Artist not found with ID: " + id));
     }
 
 }

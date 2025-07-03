@@ -39,5 +39,5 @@ public class PlaylistEntity extends BaseEntity implements Serializable {
             joinColumns = @JoinColumn(name = "PLAYLIST_ID"),
             inverseJoinColumns = @JoinColumn(name = "TRACK_ID")
     )
-    private List<ReleaseEntity> tracks;
+    private List<TrackEntity> tracks;
 }

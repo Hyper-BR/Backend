@@ -2,6 +2,8 @@ package br.com.hyper.services;
 
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
+import br.com.hyper.dtos.requests.CustomerRequestDTO;
+import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.exceptions.ArtistNotFoundException;
 import br.com.hyper.exceptions.InvalidArtistDataException;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
@@ -37,14 +39,14 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public ArtistResponseDTO becomeArtist(ArtistRequestDTO artistDTO, CustomerEntity customer) {
         try {
-//            if (artistRepository.existsByCustomer(customer)) {
-//                throw new InvalidArtistDataException(ErrorCodes.ALREADY_AN_ARTIST, "Este usuário já possui um perfil de artista.");
-//            }
+            if (artistRepository.existsByCustomer(customer)) {
+                throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, "Este usuário já possui um perfil de artista.");
+            }
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setUsername(artistDTO.getUsername().trim());
             artist.setIsVerified(false);
-            artist.setCustomer(customer); // Vínculo essencial
+            artist.setCustomer(customer);
 
             artist = artistRepository.save(artist);
 
@@ -60,6 +62,25 @@ public class ArtistServiceImpl implements ArtistService {
         Page<ArtistEntity> entities = artistRepository.findAll(pageable);
 
         return paginationMapper.map(entities, ArtistResponseDTO.class);
+    }
+
+    @Override
+    public ArtistResponseDTO update(UUID id, ArtistRequestDTO artistDTO) {
+        ArtistEntity artistEntity = findByIdOrThrowArtistDataNotFoundException(id);
+
+        if (artistDTO.getUsername() == null || artistDTO.getUsername().trim().isEmpty()) {
+            throw new InvalidArtistDataException(ErrorCodes.INVALID_DATA, "Nome artístico não pode ser vazio.");
+        }
+
+        try {
+            artistEntity.setUsername(artistDTO.getUsername().trim());
+
+            artistEntity = artistRepository.save(artistEntity);
+
+            return modelMapper.map(artistEntity, ArtistResponseDTO.class);
+        } catch (DataIntegrityViolationException e) {
+            throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, "Nome artístico já em uso.");
+        }
     }
 
     @Override

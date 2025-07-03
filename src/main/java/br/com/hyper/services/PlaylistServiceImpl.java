@@ -3,20 +3,18 @@ package br.com.hyper.services;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
-import br.com.hyper.dtos.responses.ArtistResponseDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.PlaylistEntity;
-import br.com.hyper.entities.ReleaseEntity;
+import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.exceptions.TrackException;
-import br.com.hyper.repositories.ReleaseRepository;
 import br.com.hyper.repositories.PlaylistRepository;
+import br.com.hyper.repositories.TrackRepository;
 import br.com.hyper.utils.PaginationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +30,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     private final PlaylistRepository playlistRepository;
 
-    private final ReleaseRepository releaseRepository;
+    private final TrackRepository trackRepository;
 
     private final ModelMapper modelMapper;
 
@@ -91,9 +89,21 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public PlaylistResponseDTO update(UUID id, PlaylistRequestDTO playlist) {
+
+        if (playlist == null || playlist.getName() == null || playlist.getName().isEmpty()) {
+            log.error("Playlist data is invalid");
+            throw new PlaylistNotFoundException(ErrorCodes.INVALID_DATA, "Playlist data cannot be null or empty");
+        }
+
+        if (playlist.getName().length() > 50) {
+            log.error("Playlist name exceeds maximum length of 50 characters");
+            throw new PlaylistNotFoundException(ErrorCodes.INVALID_DATA, "Playlist name exceeds maximum length of 50 characters");
+        }
+
         PlaylistEntity playlistCurrent = findByIdOrThrowPlaylistDataNotFoundException(id);
 
         playlistCurrent.setName(playlist.getName());
+        playlistCurrent.setDescription(playlist.getDescription());
 
         playlistRepository.save(playlistCurrent);
 
@@ -102,6 +112,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public void delete(UUID id) {
+
         PlaylistEntity playlistCurrent = findByIdOrThrowPlaylistDataNotFoundException(id);
 
         playlistRepository.delete(playlistCurrent);
@@ -110,28 +121,51 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public PlaylistResponseDTO addTrack(UUID id, UUID trackId) {
         PlaylistEntity playlist = findByIdOrThrowPlaylistDataNotFoundException(id);
-        ReleaseEntity track = findByIdOrThrowTrackDataNotFoundException(id);
+        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(trackId);
+
+        if (playlist.getTracks().contains(track)) {
+            log.warn("Track with ID {} is already in the playlist with ID {}", trackId, id);
+            return modelMapper.map(playlist, PlaylistResponseDTO.class);
+        }
+
         playlist.getTracks().add(track);
+        try {
+            playlistRepository.save(playlist);
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error adding track to playlist: {}", e.getMessage());
+            throw new DataIntegrityViolationException("Error adding track to playlist: " + e.getMessage());
+        }
+
         return modelMapper.map(playlist, PlaylistResponseDTO.class);
     }
 
     @Override
-    public PlaylistResponseDTO updateName(UUID id, String name) {
+    public PlaylistResponseDTO removeTrack(UUID id, UUID trackId) {
         PlaylistEntity playlist = findByIdOrThrowPlaylistDataNotFoundException(id);
+        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(trackId);
 
-        playlist.setName(name);
+        if (!playlist.getTracks().contains(track)) {
+            log.warn("Track with ID {} is not in the playlist with ID {}", trackId, id);
+            return modelMapper.map(playlist, PlaylistResponseDTO.class);
+        }
 
-        playlistRepository.save(playlist);
+        playlist.getTracks().remove(track);
+        try {
+            playlistRepository.save(playlist);
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error removing track from playlist: {}", e.getMessage());
+            throw new DataIntegrityViolationException("Error removing track from playlist: " + e.getMessage());
+        }
 
         return modelMapper.map(playlist, PlaylistResponseDTO.class);
     }
 
     private PlaylistEntity findByIdOrThrowPlaylistDataNotFoundException(UUID id) {
         return playlistRepository.findById(id).orElseThrow(
-                () -> new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
+                () -> new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, "Playlist not found with ID: " + id));
     }
-    private ReleaseEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
-        return releaseRepository.findById(id).orElseThrow(
-                () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
+    private TrackEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
+        return trackRepository.findById(id).orElseThrow(
+                () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, "Track not found with ID: " + id));
     }
 }

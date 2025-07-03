@@ -47,6 +47,6 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private ReleaseStatus status;
 
-    @OneToMany(mappedBy = "release", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "release", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TrackEntity> tracks;
 }

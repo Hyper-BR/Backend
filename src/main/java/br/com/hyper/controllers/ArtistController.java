@@ -2,7 +2,9 @@ package br.com.hyper.controllers;
 
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
+import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
+import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.ArtistService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,14 @@ public class ArtistController {
         Pageable pageable = PageRequest.of(page, size);
 
         PageResponseDTO<ArtistResponseDTO> response = artistService.find(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping(value = "/artist/{id}")
+    public ResponseEntity<ArtistResponseDTO> update(@PathVariable UUID id, @RequestBody ArtistRequestDTO artist) {
+
+        ArtistResponseDTO response = artistService.update(id, artist);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

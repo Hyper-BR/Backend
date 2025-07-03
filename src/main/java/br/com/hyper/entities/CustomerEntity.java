@@ -46,7 +46,7 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @Column(name = "BIRTH_DATE", nullable = false)
     private String birthDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUBSCRIPTION_ID", nullable = false)
     private SubscriptionEntity subscription;
 
