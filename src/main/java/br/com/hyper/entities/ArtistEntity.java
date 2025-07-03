@@ -22,15 +22,12 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "NAME", nullable = false, unique = true)
-    private String name;
+    @Column(name = "USERNAME", nullable = false, unique = true)
+    private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false, unique = true)
     private CustomerEntity customer;
-
-    @Column(name = "PROFILE_IMAGE")
-    private String profileImage;
 
     @Column(name = "IS_VERIFIED", nullable = false)
     private Boolean isVerified;

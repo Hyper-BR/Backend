@@ -5,12 +5,9 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.UUID;
 
 @Data
 public class ReleaseRequestDTO {
-
-    private UUID id;
 
     @NotEmpty(message = "Invalid title, can not be empty")
     private String title;

@@ -3,7 +3,6 @@ package br.com.hyper.services;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.LoginRequestDTO;
 import br.com.hyper.dtos.responses.LoginResponseDTO;
-import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.responses.TokenResponseDTO;
 import br.com.hyper.entities.SubscriptionEntity;
 import br.com.hyper.constants.ErrorCodes;
@@ -21,7 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -133,7 +131,13 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerEntity userCurrent = findByIdOrThrowUserDataNotFoundException(id);
 
         userCurrent.setName(user.getName());
-        userCurrent.setAvatar(user.getAvatar());
+        userCurrent.setAvatarUrl(user.getAvatarUrl());
+        userCurrent.setBirthDate(user.getBirthDate());
+        userCurrent.setCountry(user.getCountry());
+
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            userCurrent.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        }
 
         customerRepository.save(userCurrent);
 

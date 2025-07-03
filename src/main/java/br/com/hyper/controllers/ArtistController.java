@@ -23,11 +23,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ArtistController {
 
-    @Autowired
     private final ArtistService artistService;
 
     @PostMapping(value = "/artist")
-    public ResponseEntity<ArtistResponseDTO> becomeArtist(@RequestBody @Valid ArtistRequestDTO artist,
+    public ResponseEntity<ArtistResponseDTO> createArtist(@RequestBody @Valid ArtistRequestDTO artist,
                                                           @AuthenticationPrincipal CustomerEntity customer) {
 
         ArtistResponseDTO response = artistService.becomeArtist(artist, customer);

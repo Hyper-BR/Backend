@@ -9,5 +9,5 @@ public class ArtistResponseDTO {
 
     private UUID id;
 
-    private String name;
+    private String username;
 }

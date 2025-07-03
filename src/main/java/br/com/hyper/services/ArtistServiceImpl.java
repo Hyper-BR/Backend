@@ -13,7 +13,6 @@ import br.com.hyper.utils.PaginationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +42,7 @@ public class ArtistServiceImpl implements ArtistService {
 //            }
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
-            artist.setName(artistDTO.getName().trim());
+            artist.setUsername(artistDTO.getUsername().trim());
             artist.setIsVerified(false);
             artist.setCustomer(customer); // Vínculo essencial
 

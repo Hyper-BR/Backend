@@ -29,7 +29,7 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     private UUID id;
 
     @Column(name = "AVATAR_URL")
-    private String avatar;
+    private String avatarUrl;
 
     @Column(name = "NAME", nullable = false)
     private String name;
@@ -53,8 +53,9 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @JoinColumn(name = "ROLE", nullable = false)
     private UserRole role;
 
-    @OneToMany(mappedBy = "customer")
-    private List<ArtistEntity> artists;
+    @OneToOne(mappedBy = "customer")
+    @JoinColumn(name = "customer_id", nullable = false, unique = true)
+    private ArtistEntity artistProfile;
 
     @Column(name = "BIOGRAPHY")
     private String biography;
