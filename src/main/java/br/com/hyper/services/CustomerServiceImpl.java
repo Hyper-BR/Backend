@@ -38,20 +38,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
     private final CustomerRepository customerRepository;
 
-    @Autowired
     private final SubscriptionRepository subscriptionRepository;
 
-    @Autowired
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
     private final CustomerTokenUtil customerTokenUtil;
 
-    @Autowired
     private final ModelMapper modelMapper;
+
+    private final PaginationMapper paginationMapper;
 
     @Override
     public CustomerResponseDTO save(CustomerRequestDTO customer) {
@@ -128,7 +125,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         Page<CustomerEntity> customerEntities = customerRepository.findAll(pageable);
 
-        return PaginationMapper.map(customerEntities, CustomerResponseDTO.class);
+        return paginationMapper.map(customerEntities, CustomerResponseDTO.class);
     }
 
     @Override

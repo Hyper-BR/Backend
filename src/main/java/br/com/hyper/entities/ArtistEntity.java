@@ -6,7 +6,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -36,6 +35,4 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @Column(name = "IS_VERIFIED", nullable = false)
     private Boolean isVerified;
 
-    @Column(name = "BIOGRAPHY")
-    private String biography;
 }

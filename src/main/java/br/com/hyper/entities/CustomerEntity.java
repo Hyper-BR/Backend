@@ -56,6 +56,9 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @OneToMany(mappedBy = "customer")
     private List<ArtistEntity> artists;
 
+    @Column(name = "BIOGRAPHY")
+    private String biography;
+
 //    @OneToMany(mappedBy = "customer")
 //    private List<PlaylistEntity> playlists;
 

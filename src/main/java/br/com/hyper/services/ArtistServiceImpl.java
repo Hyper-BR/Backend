@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import br.com.hyper.entities.ArtistEntity;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -28,28 +27,31 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
 
-    @Autowired
     private final ArtistRepository artistRepository;
 
-    @Autowired
     private final ModelMapper modelMapper;
 
-    @Autowired
+    private final PaginationMapper paginationMapper;
+
     private final CustomerRepository customerRepository;
 
     @Override
-    public ArtistResponseDTO save(ArtistRequestDTO artistDTO, CustomerEntity  customer) {
+    public ArtistResponseDTO becomeArtist(ArtistRequestDTO artistDTO, CustomerEntity customer) {
         try {
+//            if (artistRepository.existsByCustomer(customer)) {
+//                throw new InvalidArtistDataException(ErrorCodes.ALREADY_AN_ARTIST, "Este usuário já possui um perfil de artista.");
+//            }
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setName(artistDTO.getName().trim());
-            artist.setCustomer(customer);
             artist.setIsVerified(false);
-            artistRepository.save(artist);
+            artist.setCustomer(customer); // Vínculo essencial
+
+            artist = artistRepository.save(artist);
 
             return modelMapper.map(artist, ArtistResponseDTO.class);
         } catch (DataIntegrityViolationException e) {
-            throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
+            throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, "Nome artístico já em uso.");
         }
     }
 
@@ -58,7 +60,7 @@ public class ArtistServiceImpl implements ArtistService {
 
         Page<ArtistEntity> entities = artistRepository.findAll(pageable);
 
-        return PaginationMapper.map(entities, ArtistResponseDTO.class);
+        return paginationMapper.map(entities, ArtistResponseDTO.class);
     }
 
     @Override

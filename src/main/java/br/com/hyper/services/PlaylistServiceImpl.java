@@ -30,28 +30,25 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PlaylistServiceImpl implements PlaylistService {
 
-    @Autowired
-    private PlaylistRepository playlistRepository;
+    private final PlaylistRepository playlistRepository;
 
-    @Autowired
-    private ReleaseRepository releaseRepository;
+    private final ReleaseRepository releaseRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+
+    private final PaginationMapper paginationMapper;
 
     @Override
     public PlaylistResponseDTO save(PlaylistRequestDTO playlist, CustomerEntity customer) {
 
-        PlaylistEntity playlistEntity = new PlaylistEntity();
+        PlaylistEntity playlistEntity;
         try{
             if (playlist.getName() == null || playlist.getName().isEmpty()) {
                 log.error("Playlist name cannot be null or empty");
                 throw new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, "Playlist name cannot be null or empty");
             }
             
-            playlistEntity.setName(playlist.getName());
-
-//            playlistEntity = modelMapper.map(playlist, PlaylistEntity.class);
+            playlistEntity = modelMapper.map(playlist, PlaylistEntity.class);
             playlistEntity.setCustomer(customer);
             playlistEntity = playlistRepository.save(playlistEntity);
 
@@ -67,7 +64,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         Page<PlaylistEntity> playlistEntities = playlistRepository.findAll(pageable);
 
-        return PaginationMapper.map(playlistEntities, PlaylistResponseDTO.class);
+        return paginationMapper.map(playlistEntities, PlaylistResponseDTO.class);
     }
 
     @Override

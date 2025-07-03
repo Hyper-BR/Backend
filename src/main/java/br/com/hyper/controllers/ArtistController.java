@@ -27,10 +27,10 @@ public class ArtistController {
     private final ArtistService artistService;
 
     @PostMapping(value = "/artist")
-    public ResponseEntity<ArtistResponseDTO> save(@RequestBody @Valid ArtistRequestDTO artist,
-                                                  @AuthenticationPrincipal CustomerEntity customer) {
+    public ResponseEntity<ArtistResponseDTO> becomeArtist(@RequestBody @Valid ArtistRequestDTO artist,
+                                                          @AuthenticationPrincipal CustomerEntity customer) {
 
-        ArtistResponseDTO response = artistService.save(artist, customer);
+        ArtistResponseDTO response = artistService.becomeArtist(artist, customer);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
