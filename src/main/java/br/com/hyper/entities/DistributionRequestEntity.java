@@ -29,14 +29,15 @@ public class DistributionRequestEntity extends BaseEntity implements Serializabl
     @JoinColumn(name = "RELEASE_ID", nullable = false)
     private ReleaseEntity release;
 
-    @Column(name = "target_dsps", columnDefinition = "jsonb")
+    @Column(name = "TARGET_DSPS", columnDefinition = "jsonb", nullable = false)
     private String targetDsps;
 
+    @Column(name = "STATUS")
     private String status;
 
-    @Column(name = "submitted_at")
+    @Column(name = "SUBMITTED_AT")
     private ZonedDateTime submittedAt;
 
-    @Column(name = "delivered_at")
+    @Column(name = "DELIVERED_AT")
     private ZonedDateTime deliveredAt;
 }
