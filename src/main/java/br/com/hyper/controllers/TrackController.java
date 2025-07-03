@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -27,7 +28,7 @@ public class TrackController {
 
     @PostMapping(value = "/track", consumes = { "multipart/form-data" })
     public ResponseEntity<TrackResponseDTO> create(
-            @RequestParam(value = "artistId") Long artistId,
+            @RequestParam(value = "artistId") UUID artistId,
             @ModelAttribute(value = "track") TrackRequestDTO track) throws IOException {
 
         TrackResponseDTO response = trackService.save(track, artistId);
@@ -50,7 +51,7 @@ public class TrackController {
     }
 
     @GetMapping(value = "/track/{id}")
-    public ResponseEntity<TrackResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<TrackResponseDTO> findById(@PathVariable UUID id) {
 
         TrackResponseDTO response = trackService.findById(id);
 
@@ -58,13 +59,13 @@ public class TrackController {
     }
 
     @GetMapping(value = "/track/{id}/url")
-    public String getTrackUrl(@PathVariable Long id) {
+    public String getTrackUrl(@PathVariable UUID id) {
 
         return trackService.getTrackUrl(id);
     }
 
     @PutMapping(value = "/track/{id}")
-    public ResponseEntity<TrackResponseDTO> update(@PathVariable Long id, @RequestBody TrackRequestDTO music) {
+    public ResponseEntity<TrackResponseDTO> update(@PathVariable UUID id, @RequestBody TrackRequestDTO music) {
 
         TrackResponseDTO response = trackService.update(id, music);
 
@@ -72,7 +73,7 @@ public class TrackController {
     }
 
     @DeleteMapping(value = "/track/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable UUID id){
 
         trackService.delete(id);
 
@@ -80,7 +81,7 @@ public class TrackController {
     }
 
     @GetMapping(value = "/track/download/{id}")
-    public ResponseEntity<byte[]> downloadTrack(@PathVariable Long id) {
+    public ResponseEntity<byte[]> downloadTrack(@PathVariable UUID id) {
 
         byte[] data = trackService.downloadTrack(id);
 

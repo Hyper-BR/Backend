@@ -97,7 +97,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public PlaylistResponseDTO update(Long id, PlaylistRequestDTO playlist) {
+    public PlaylistResponseDTO update(UUID id, PlaylistRequestDTO playlist) {
         PlaylistEntity playlistCurrent = findByIdOrThrowPlaylistDataNotFoundException(id);
 
         playlistCurrent.setName(playlist.getName());
@@ -108,14 +108,14 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         PlaylistEntity playlistCurrent = findByIdOrThrowPlaylistDataNotFoundException(id);
 
         playlistRepository.delete(playlistCurrent);
     }
 
     @Override
-    public PlaylistResponseDTO addTrack(Long id, Long trackId) {
+    public PlaylistResponseDTO addTrack(UUID id, UUID trackId) {
         PlaylistEntity playlist = findByIdOrThrowPlaylistDataNotFoundException(id);
         ReleaseEntity track = findByIdOrThrowTrackDataNotFoundException(id);
         playlist.getTracks().add(track);
@@ -123,7 +123,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
-    public PlaylistResponseDTO updateName(Long id, String name) {
+    public PlaylistResponseDTO updateName(UUID id, String name) {
         PlaylistEntity playlist = findByIdOrThrowPlaylistDataNotFoundException(id);
 
         playlist.setName(name);
@@ -133,11 +133,11 @@ public class PlaylistServiceImpl implements PlaylistService {
         return modelMapper.map(playlist, PlaylistResponseDTO.class);
     }
 
-    private PlaylistEntity findByIdOrThrowPlaylistDataNotFoundException(Long id) {
+    private PlaylistEntity findByIdOrThrowPlaylistDataNotFoundException(UUID id) {
         return playlistRepository.findById(id).orElseThrow(
                 () -> new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
-    private ReleaseEntity findByIdOrThrowTrackDataNotFoundException(Long id) {
+    private ReleaseEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
         return releaseRepository.findById(id).orElseThrow(
                 () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }

@@ -17,11 +17,11 @@ public interface PlaylistService {
 
     List<PlaylistResponseDTO> findByCustomer(UUID id);
 
-    PlaylistResponseDTO update(Long id, PlaylistRequestDTO playlist);
+    PlaylistResponseDTO update(UUID id, PlaylistRequestDTO playlist);
 
-    void delete(Long id);
+    void delete(UUID id);
 
-    PlaylistResponseDTO updateName(Long id, String name);
+    PlaylistResponseDTO updateName(UUID id, String name);
 
-    PlaylistResponseDTO addTrack(Long id, Long trackId);
+    PlaylistResponseDTO addTrack(UUID id, UUID trackId);
 }

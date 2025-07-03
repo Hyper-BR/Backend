@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -58,7 +59,7 @@ public class PlaylistController {
     }
 
     @PutMapping(value = "/playlist/{id}")
-    public ResponseEntity<PlaylistResponseDTO> update(@PathVariable Long id, @RequestBody @Valid PlaylistRequestDTO playlist) {
+    public ResponseEntity<PlaylistResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid PlaylistRequestDTO playlist) {
 
         PlaylistResponseDTO response = playlistService.updateName(id, playlist.getName());
 
@@ -67,8 +68,8 @@ public class PlaylistController {
 
     @PutMapping(value = "/playlist/{id}/add-track")
     public ResponseEntity<PlaylistResponseDTO> addTrack(
-                                                        @PathVariable Long id,
-                                                        @RequestBody Long trackId) {
+                                                        @PathVariable UUID id,
+                                                        @RequestBody UUID trackId) {
 
         PlaylistResponseDTO response = playlistService.addTrack(id, trackId);
 
@@ -76,7 +77,7 @@ public class PlaylistController {
     }
 
     @DeleteMapping(value = "/playlist/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable UUID id){
 
         playlistService.delete(id);
 

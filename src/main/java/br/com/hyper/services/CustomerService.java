@@ -9,6 +9,8 @@ import br.com.hyper.entities.CustomerEntity;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.util.UUID;
+
 public interface CustomerService {
 
     CustomerResponseDTO save(CustomerRequestDTO customer);
@@ -21,7 +23,7 @@ public interface CustomerService {
 
     CustomerPageResponseDTO findAll(Pageable pageable);
 
-    CustomerResponseDTO update(Long id, CustomerRequestDTO user);
+    CustomerResponseDTO update(UUID id, CustomerRequestDTO user);
 
-    void delete(Long id);
+    void delete(UUID id);
 }

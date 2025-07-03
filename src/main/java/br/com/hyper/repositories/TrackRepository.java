@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TrackRepository extends BaseRepository<TrackEntity> {
+public interface TrackRepository extends UuidRepository<TrackEntity> {
 
     @Query("SELECT o FROM TrackEntity o WHERE genre in :genres")
     Page<TrackEntity> findByGenres(@Param("genres") List<String> genres,

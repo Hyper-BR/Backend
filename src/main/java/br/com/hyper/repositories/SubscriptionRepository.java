@@ -4,6 +4,6 @@ import br.com.hyper.entities.SubscriptionEntity;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SubscriptionRepository extends BaseRepository<SubscriptionEntity> {
+public interface SubscriptionRepository extends LongRepository<SubscriptionEntity> {
 
 }

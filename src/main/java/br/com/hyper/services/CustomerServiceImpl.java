@@ -29,6 +29,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -128,7 +130,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponseDTO update(Long id, CustomerRequestDTO user) {
+    public CustomerResponseDTO update(UUID id, CustomerRequestDTO user) {
         CustomerEntity userCurrent = findByIdOrThrowUserDataNotFoundException(id);
 
         userCurrent.setName(user.getName());
@@ -140,14 +142,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         CustomerEntity userCurrent = findByIdOrThrowUserDataNotFoundException(id);
 
         modelMapper.map(userCurrent, CustomerResponseDTO.class);
         customerRepository.delete(userCurrent);
     }
 
-    private CustomerEntity findByIdOrThrowUserDataNotFoundException(Long id) {
+    private CustomerEntity findByIdOrThrowUserDataNotFoundException(UUID id) {
         return customerRepository.findById(id).orElseThrow(
                 () -> new CustomerException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }

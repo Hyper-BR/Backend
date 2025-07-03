@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface PlaylistRepository extends BaseRepository<PlaylistEntity> {
+public interface PlaylistRepository extends UuidRepository<PlaylistEntity> {
 
     @Query("SELECT o FROM PlaylistEntity o WHERE o.name = :name")
     Page<PlaylistEntity> findByName(@Param("name") String name,

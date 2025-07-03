@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -74,7 +75,7 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/customer/{id}")
-    public ResponseEntity<CustomerResponseDTO> update(@PathVariable Long id, @RequestBody @Valid CustomerRequestDTO user) {
+    public ResponseEntity<CustomerResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid CustomerRequestDTO user) {
 
         CustomerResponseDTO response = customerService.update(id, user);
 
@@ -82,7 +83,7 @@ public class CustomerController {
     }
 
     @DeleteMapping(value = "/customer/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable UUID id){
 
         customerService.delete(id);
 

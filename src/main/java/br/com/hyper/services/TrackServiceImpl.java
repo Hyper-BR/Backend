@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -41,7 +42,7 @@ public class TrackServiceImpl implements TrackService {
     private final ModelMapper modelMapper;
 
     @Override
-    public TrackResponseDTO save(TrackRequestDTO track, Long artistId) throws IOException {
+    public TrackResponseDTO save(TrackRequestDTO track, UUID artistId) throws IOException {
 
         ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(artistId);
 
@@ -88,7 +89,7 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public TrackResponseDTO findById(Long id) {
+    public TrackResponseDTO findById(UUID id) {
 
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 
@@ -97,7 +98,7 @@ public class TrackServiceImpl implements TrackService {
 
 
     @Override
-    public TrackResponseDTO update(Long id, TrackRequestDTO track) {
+    public TrackResponseDTO update(UUID id, TrackRequestDTO track) {
         TrackEntity trackCurrent = findByIdOrThrowTrackDataNotFoundException(id);
 
 //        trackCurrent.setName(track.getName());
@@ -112,14 +113,14 @@ public class TrackServiceImpl implements TrackService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         TrackEntity musicCurrent = findByIdOrThrowTrackDataNotFoundException(id);
 
         trackRepository.delete(musicCurrent);
     }
 
 
-    public byte[] downloadTrack(Long id) {
+    public byte[] downloadTrack(UUID id) {
 
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 //        return amazonBucketS3.downloadTrack(track.getPath());
@@ -132,7 +133,7 @@ public class TrackServiceImpl implements TrackService {
         }
     }
 
-    public String getTrackUrl(Long id) {
+    public String getTrackUrl(UUID id) {
 
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 
@@ -140,12 +141,12 @@ public class TrackServiceImpl implements TrackService {
         return Paths.get("uploads", track.getTitle() + ".mp3").toString();
     }
 
-    private TrackEntity findByIdOrThrowTrackDataNotFoundException(Long id) {
+    private TrackEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
         return trackRepository.findById(id).orElseThrow(
                 () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 
-    private ArtistEntity findByIdOrThrowArtistDataNotFoundException(Long id) {
+    private ArtistEntity findByIdOrThrowArtistDataNotFoundException(UUID id) {
         return artistRepository.findById(id).orElseThrow(
                 () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }

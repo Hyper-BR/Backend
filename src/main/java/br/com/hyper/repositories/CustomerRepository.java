@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends BaseRepository<CustomerEntity> {
+public interface CustomerRepository extends UuidRepository<CustomerEntity> {
 
     @Query("SELECT o FROM CustomerEntity o WHERE email = :email")
     UserDetails findByEmailUserDetails(@Param("email") String email);
