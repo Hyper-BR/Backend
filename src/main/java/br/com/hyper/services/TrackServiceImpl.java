@@ -5,17 +5,21 @@ import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.ArtistEntity;
-import br.com.hyper.entities.PlaylistEntity;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.repositories.TrackRepository;
+import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,6 +78,25 @@ public class TrackServiceImpl implements TrackService {
 
         TrackEntity trackEntity = trackRepository.save(trackCurrent);
         return modelMapper.map(trackEntity, TrackResponseDTO.class);
+    }
+
+    @Override
+    public Resource loadAudio(UUID id) {
+        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
+        String filePath = track.getFileUrl();
+
+        try {
+            Path path = Paths.get(filePath);
+            Resource resource = new UrlResource(path.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Arquivo não encontrado ou não legível");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("URL do arquivo malformada", e);
+        }
     }
 
     @Override
