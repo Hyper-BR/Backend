@@ -26,7 +26,7 @@ public class CustomerSecurityFilterUtil extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = recoverToken(request);
+        String token = getTokenFromRequest(request);
 
         if(token != null) {
             String email = customerTokenUtil.validateToken(token);
@@ -39,19 +39,14 @@ public class CustomerSecurityFilterUtil extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String recoverToken(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String authHeader = request.getHeader("Authorization");
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                logger.info(cookie);
-                if (cookie.getName().equals("token")) return cookie.getValue();
+    private String getTokenFromRequest(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
             }
-        } else if(authHeader != null) {
-            return authHeader.replace("Bearer ", "");
         }
         return null;
-
     }
 }

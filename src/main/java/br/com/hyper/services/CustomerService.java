@@ -1,12 +1,8 @@
 package br.com.hyper.services;
 
 import br.com.hyper.dtos.PageResponseDTO;
-import br.com.hyper.dtos.requests.LoginRequestDTO;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
-import br.com.hyper.dtos.responses.LoginResponseDTO;
-import br.com.hyper.entities.CustomerEntity;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
@@ -14,10 +10,6 @@ import java.util.UUID;
 public interface CustomerService {
 
     CustomerResponseDTO save(CustomerRequestDTO customer);
-
-    LoginResponseDTO login(LoginRequestDTO authentication, HttpServletResponse http);
-
-    LoginResponseDTO refresh(CustomerEntity customer);
 
     CustomerResponseDTO findByEmail(String email);
 
