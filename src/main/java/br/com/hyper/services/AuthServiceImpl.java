@@ -1,24 +1,31 @@
 package br.com.hyper.services;
 
 import br.com.hyper.constants.ErrorCodes;
-import br.com.hyper.dtos.requests.LoginRequestDTO;
+import br.com.hyper.dtos.requests.AuthRequestDTO;
+import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
+import br.com.hyper.entities.SubscriptionEntity;
+import br.com.hyper.enums.UserRole;
 import br.com.hyper.exceptions.CustomerException;
 import br.com.hyper.repositories.CustomerRepository;
+import br.com.hyper.repositories.SubscriptionRepository;
 import br.com.hyper.utils.JwtUtil;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,7 +34,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LoginServiceImpl implements LoginService {
+public class AuthServiceImpl implements AuthService {
 
     private final CustomerRepository customerRepository;
 
@@ -39,7 +46,33 @@ public class LoginServiceImpl implements LoginService {
 
     private final TokenService tokenService;
 
-    public CustomerResponseDTO login(LoginRequestDTO loginRequest, HttpServletResponse http) {
+    private final SubscriptionRepository subscriptionRepository;
+
+    @Override
+    public CustomerResponseDTO register(CustomerRequestDTO customer) {
+        CustomerEntity customerEntity;
+        try {
+            SubscriptionEntity subscription = subscriptionRepository.findById(customer.getSubscription()).orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
+
+            if (customerRepository.findByEmail(customer.getEmail()).isPresent()){
+                throw new CustomerException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
+            }
+
+            customerEntity = modelMapper.map(customer, CustomerEntity.class);
+
+            customerEntity.setRole(UserRole.CUSTOMER);
+            customerEntity.setSubscription(subscription);
+            customerEntity.setPassword(new BCryptPasswordEncoder().encode(customer.getPassword()));
+            customerEntity = customerRepository.save(customerEntity);
+
+            return modelMapper.map(customerEntity, CustomerResponseDTO.class);
+        }  catch (DataIntegrityViolationException e) {
+            throw new CustomerException(ErrorCodes.DUPLICATED_DATA,
+                    ErrorCodes.DUPLICATED_DATA.getMessage());
+        }
+    }
+
+    public CustomerResponseDTO login(AuthRequestDTO loginRequest, HttpServletResponse http) {
         UsernamePasswordAuthenticationToken login =
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
 

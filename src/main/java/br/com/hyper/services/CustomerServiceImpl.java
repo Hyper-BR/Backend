@@ -32,39 +32,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    private final SubscriptionRepository subscriptionRepository;
-
-    private final AuthenticationManager authenticationManager;
-
-    private final JwtUtil jwtUtil;
-
     private final ModelMapper modelMapper;
 
     private final PaginationMapper paginationMapper;
-
-    @Override
-    public CustomerResponseDTO save(CustomerRequestDTO customer) {
-        CustomerEntity customerEntity;
-        try {
-            SubscriptionEntity subscription = subscriptionRepository.findById(customer.getSubscription()).orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
-
-            if (customerRepository.findByEmail(customer.getEmail()).isPresent()){
-                throw new CustomerException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
-            }
-
-            customerEntity = modelMapper.map(customer, CustomerEntity.class);
-
-            customerEntity.setRole(UserRole.CUSTOMER);
-            customerEntity.setSubscription(subscription);
-            customerEntity.setPassword(new BCryptPasswordEncoder().encode(customer.getPassword()));
-            customerEntity = customerRepository.save(customerEntity);
-
-            return modelMapper.map(customerEntity, CustomerResponseDTO.class);
-        }  catch (DataIntegrityViolationException e) {
-            throw new CustomerException(ErrorCodes.DUPLICATED_DATA,
-                    ErrorCodes.DUPLICATED_DATA.getMessage());
-        }
-    }
 
     @Override
     public CustomerResponseDTO findByEmail(String email) {

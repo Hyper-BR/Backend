@@ -76,7 +76,7 @@ public class ReleaseServiceImpl implements ReleaseService {
             release.setStatus(ReleaseStatus.DRAFT);
             releaseRepository.save(release);
 
-            String releaseDir = sanitize(releaseDTO.getTitle());
+            String releaseDir = sanitize(customer.getArtistProfile().getUsername());
             String trackFileName = sanitize(releaseDTO.getTitle()) + ".mp3";
             Path outputPath = Paths.get("uploads", releaseDir, trackFileName);
 

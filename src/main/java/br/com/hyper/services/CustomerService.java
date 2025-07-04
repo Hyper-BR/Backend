@@ -9,8 +9,6 @@ import java.util.UUID;
 
 public interface CustomerService {
 
-    CustomerResponseDTO save(CustomerRequestDTO customer);
-
     CustomerResponseDTO findByEmail(String email);
 
     PageResponseDTO<CustomerResponseDTO> findAll(Pageable pageable);

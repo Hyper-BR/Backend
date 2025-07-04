@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -21,14 +20,6 @@ import java.util.UUID;
 public class CustomerController {
 
     private final CustomerService customerService;
-
-    @PostMapping(value = "/customer")
-    public ResponseEntity<CustomerResponseDTO> save(@RequestBody @Valid CustomerRequestDTO customer){
-
-        CustomerResponseDTO response = customerService.save(customer);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 
     @GetMapping(value = "/customer/{email}")
     public ResponseEntity<CustomerResponseDTO> findByEmail(@PathVariable String email) {

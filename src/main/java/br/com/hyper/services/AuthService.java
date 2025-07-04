@@ -1,14 +1,17 @@
 package br.com.hyper.services;
 
-import br.com.hyper.dtos.requests.LoginRequestDTO;
+import br.com.hyper.dtos.requests.AuthRequestDTO;
+import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public interface LoginService {
+public interface AuthService {
 
-    CustomerResponseDTO login(LoginRequestDTO authentication, HttpServletResponse http);
+    CustomerResponseDTO register(CustomerRequestDTO customer);
+
+    CustomerResponseDTO login(AuthRequestDTO authentication, HttpServletResponse http);
 
     CustomerResponseDTO me(CustomerEntity customer);
 
