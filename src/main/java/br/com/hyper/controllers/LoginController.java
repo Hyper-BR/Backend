@@ -4,6 +4,7 @@ import br.com.hyper.dtos.requests.LoginRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.LoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,4 +48,11 @@ public class LoginController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/auth/refresh")
+    public ResponseEntity<Void> refresh(HttpServletRequest request, HttpServletResponse response) {
+        loginService.refresh(request, response);
+        return ResponseEntity.noContent().build();
+    }
+
 }

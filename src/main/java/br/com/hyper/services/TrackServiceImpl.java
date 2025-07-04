@@ -8,6 +8,7 @@ import br.com.hyper.entities.ArtistEntity;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.repositories.TrackRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

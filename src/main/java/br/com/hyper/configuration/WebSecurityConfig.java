@@ -1,10 +1,9 @@
 package br.com.hyper.configuration;
 
-import br.com.hyper.utils.CustomerSecurityFilterUtil;
+import br.com.hyper.utils.JwtAuthenticationFilterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,7 +24,7 @@ import java.io.PrintWriter;
 public class WebSecurityConfig {
 
     @Autowired
-    private CustomerSecurityFilterUtil customerSecurityFilterUtil;
+    private JwtAuthenticationFilterUtil jwtAuthenticationFilterUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception, RuntimeException {
@@ -36,7 +35,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().permitAll()
                 )
-                .addFilterBefore(customerSecurityFilterUtil, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilterUtil, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedEntryPoint())
                         .accessDeniedHandler(deniedEntryPoint()))
                 .build();

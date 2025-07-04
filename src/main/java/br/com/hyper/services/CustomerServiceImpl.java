@@ -10,7 +10,7 @@ import br.com.hyper.exceptions.CustomerException;
 import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.repositories.SubscriptionRepository;
-import br.com.hyper.utils.CustomerTokenUtil;
+import br.com.hyper.utils.JwtUtil;
 import br.com.hyper.utils.PaginationMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final CustomerTokenUtil customerTokenUtil;
+    private final JwtUtil jwtUtil;
 
     private final ModelMapper modelMapper;
 

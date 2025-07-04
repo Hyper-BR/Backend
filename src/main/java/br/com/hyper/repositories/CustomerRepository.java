@@ -10,12 +10,16 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface CustomerRepository extends UuidRepository<CustomerEntity> {
 
     @Query("SELECT o FROM CustomerEntity o WHERE email = :email")
     UserDetails findByEmailUserDetails(@Param("email") String email);
+
+    @Query("SELECT o FROM CustomerEntity o WHERE id = :id")
+    UserDetails findByIdUserDetails(@Param("id") UUID id);
 
     @Query("SELECT o FROM CustomerEntity o WHERE email = :email")
     Optional<CustomerEntity> findByEmail(@Param("email")String email);
