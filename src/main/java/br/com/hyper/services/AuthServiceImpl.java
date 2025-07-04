@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     private final SubscriptionRepository subscriptionRepository;
 
     @Override
-    public CustomerResponseDTO register(CustomerRequestDTO customer) {
+    public CustomerResponseDTO register(CustomerRequestDTO customer, HttpServletResponse http) {
         CustomerEntity customerEntity;
         try {
             SubscriptionEntity subscription = subscriptionRepository.findById(customer.getSubscription()).orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
@@ -64,6 +64,12 @@ public class AuthServiceImpl implements AuthService {
             customerEntity.setSubscription(subscription);
             customerEntity.setPassword(new BCryptPasswordEncoder().encode(customer.getPassword()));
             customerEntity = customerRepository.save(customerEntity);
+
+            Cookie accessCookie = tokenService.generateAccessTokenCookie(customerEntity);
+            Cookie refreshCookie = tokenService.generateRefreshTokenCookie(customerEntity);
+
+            http.addCookie(accessCookie);
+            http.addCookie(refreshCookie);
 
             return modelMapper.map(customerEntity, CustomerResponseDTO.class);
         }  catch (DataIntegrityViolationException e) {

@@ -28,9 +28,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(value = "/auth/register")
-    public ResponseEntity<CustomerResponseDTO> save(@RequestBody @Valid CustomerRequestDTO customer){
+    public ResponseEntity<CustomerResponseDTO> save(@RequestBody @Valid CustomerRequestDTO customer, HttpServletResponse http){
 
-        CustomerResponseDTO response = authService.register(customer);
+        CustomerResponseDTO response = authService.register(customer, http);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
 
-    CustomerResponseDTO register(CustomerRequestDTO customer);
+    CustomerResponseDTO register(CustomerRequestDTO customer, HttpServletResponse http);
 
     CustomerResponseDTO login(AuthRequestDTO authentication, HttpServletResponse http);
 
