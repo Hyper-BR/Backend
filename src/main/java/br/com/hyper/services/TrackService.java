@@ -12,6 +12,8 @@ public interface TrackService {
 
     PageResponseDTO<TrackResponseDTO> find(Pageable pageable);
 
+    PageResponseDTO<TrackResponseDTO> findByArtistId(Pageable pageable, UUID customerId);
+
     TrackResponseDTO update(UUID id, TrackRequestDTO track);
 
     Resource loadAudio(UUID id);

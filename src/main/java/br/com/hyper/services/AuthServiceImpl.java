@@ -134,11 +134,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+        Cookie accessToken = new Cookie("access_token", null);
+        accessToken.setPath("/");
+        accessToken.setMaxAge(0);
+        accessToken.setHttpOnly(true);
+        accessToken.setSecure(true);
+        response.addCookie(accessToken);
+
+        Cookie refreshToken = new Cookie("refresh_token", null);
+        refreshToken.setPath("/");
+        refreshToken.setMaxAge(0);
+        refreshToken.setHttpOnly(true);
+        refreshToken.setSecure(true);
+        response.addCookie(refreshToken);
     }
 
 

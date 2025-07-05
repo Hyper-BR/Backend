@@ -4,6 +4,7 @@ import br.com.hyper.dtos.AudioDTO;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
+import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.AudioStreamingService;
 import br.com.hyper.services.TrackService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,6 +39,19 @@ public class TrackController {
         Pageable pageable = PageRequest.of(page, size);
 
         PageResponseDTO<TrackResponseDTO> response = trackService.find(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping(value = "/tracks/artist/profile")
+    public ResponseEntity<PageResponseDTO<TrackResponseDTO>> findByLoggedCustomer(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+            @AuthenticationPrincipal CustomerEntity customer) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        PageResponseDTO<TrackResponseDTO> response = trackService.findByArtistId(pageable, customer.getArtistProfile().getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
