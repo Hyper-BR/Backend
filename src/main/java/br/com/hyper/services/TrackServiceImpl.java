@@ -3,6 +3,7 @@ package br.com.hyper.services;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
+import br.com.hyper.dtos.responses.ArtistResponseDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.ArtistEntity;
 import br.com.hyper.entities.TrackEntity;
@@ -39,7 +40,7 @@ public class TrackServiceImpl implements TrackService {
                 .map(track -> {
                     TrackResponseDTO dto = modelMapper.map(track, TrackResponseDTO.class);
                     dto.setArtists(track.getArtists().stream()
-                            .map(ArtistEntity::getUsername)
+                            .map(artist -> new ArtistResponseDTO(artist.getId(),artist.getUsername()))
                             .toList());
                     return dto;
                 })
@@ -63,7 +64,7 @@ public class TrackServiceImpl implements TrackService {
                 .map(track -> {
                     TrackResponseDTO dto = modelMapper.map(track, TrackResponseDTO.class);
                     dto.setArtists(track.getArtists().stream()
-                            .map(ArtistEntity::getUsername)
+                            .map(artist -> new ArtistResponseDTO(artist.getId(),artist.getUsername()))
                             .toList());
                     return dto;
                 })

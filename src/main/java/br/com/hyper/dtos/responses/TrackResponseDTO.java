@@ -15,5 +15,5 @@ public class TrackResponseDTO {
     private String genre;
     private String fileUrl;
     private BigDecimal price;
-    private List<String> artists;
+    private List<ArtistResponseDTO> artists;
 }
