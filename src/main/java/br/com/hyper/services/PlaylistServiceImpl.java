@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -63,6 +64,13 @@ public class PlaylistServiceImpl implements PlaylistService {
         Page<PlaylistEntity> playlistEntities = playlistRepository.findAll(pageable);
 
         return paginationMapper.map(playlistEntities, PlaylistResponseDTO.class);
+    }
+
+    @Override
+    public PlaylistResponseDTO findById(UUID id) {
+        PlaylistEntity playlist = findByIdOrThrowPlaylistDataNotFoundException(id);
+
+        return modelMapper.map(playlist, PlaylistResponseDTO.class);
     }
 
     @Override

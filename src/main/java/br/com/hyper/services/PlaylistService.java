@@ -15,6 +15,8 @@ public interface PlaylistService {
 
     PageResponseDTO<PlaylistResponseDTO> find(Pageable pageable);
 
+    PlaylistResponseDTO findById(UUID id);
+
     List<PlaylistResponseDTO> findByCustomer(UUID id);
 
     PlaylistResponseDTO update(UUID id, PlaylistRequestDTO playlist);

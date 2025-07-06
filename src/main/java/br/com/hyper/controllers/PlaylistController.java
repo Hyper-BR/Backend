@@ -2,7 +2,6 @@ package br.com.hyper.controllers;
 
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
-import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.PlaylistService;
@@ -55,6 +54,14 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping(value = "/playlists/{playlistId}")
+    public ResponseEntity<PlaylistResponseDTO> findById(@PathVariable UUID playlistId) {
+
+        PlaylistResponseDTO response = playlistService.findById(playlistId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PutMapping(value = "/playlists/{id}")
     public ResponseEntity<PlaylistResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid PlaylistRequestDTO playlist) {
 
@@ -63,11 +70,11 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping(value = "/playlists/{playlistId}/tracks")
+    @PostMapping(value = "/playlists/{playlistId}/tracks/{trackId}")
     public ResponseEntity<PlaylistResponseDTO> addTrack(@PathVariable UUID playlistId,
-                                                        @RequestBody TrackRequestDTO track) {
+                                                        @PathVariable UUID trackId) {
 
-        PlaylistResponseDTO response = playlistService.addTrack(playlistId, track.getId());
+        PlaylistResponseDTO response = playlistService.addTrack(playlistId, trackId);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

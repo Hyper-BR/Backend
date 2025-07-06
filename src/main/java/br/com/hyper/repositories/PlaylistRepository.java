@@ -13,10 +13,6 @@ import java.util.UUID;
 @Repository
 public interface PlaylistRepository extends UuidRepository<PlaylistEntity> {
 
-    @Query("SELECT o FROM PlaylistEntity o WHERE o.name = :name")
-    Page<PlaylistEntity> findByName(@Param("name") String name,
-                                    Pageable pageable);
-
     @Query("SELECT o FROM PlaylistEntity o WHERE o.customer.id = :customerId")
     List<PlaylistEntity> findByCustomerId(@Param("customerId") UUID customerId);
 
