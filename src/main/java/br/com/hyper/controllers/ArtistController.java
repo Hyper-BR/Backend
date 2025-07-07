@@ -48,7 +48,16 @@ public class ArtistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping(value = "/artists/{id}")
+    @GetMapping(value = "/artist/{id}")
+    public ResponseEntity<ArtistResponseDTO> findById(
+            @PathVariable UUID id) {
+
+        ArtistResponseDTO response = artistService.findById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping(value = "/artist/{id}")
     public ResponseEntity<ArtistResponseDTO> update(@PathVariable UUID id, @RequestBody ArtistRequestDTO artist) {
 
         ArtistResponseDTO response = artistService.update(id, artist);
@@ -56,7 +65,7 @@ public class ArtistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping(value = "/artists/{id}")
+    @DeleteMapping(value = "/artist/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
 
         artistService.delete(id);

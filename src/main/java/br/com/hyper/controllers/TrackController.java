@@ -43,15 +43,15 @@ public class TrackController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(value = "/tracks/artist/profile")
-    public ResponseEntity<PageResponseDTO<TrackResponseDTO>> findByLoggedCustomer(
+    @GetMapping(value = "/tracks/artist/{artistId}")
+    public ResponseEntity<PageResponseDTO<TrackResponseDTO>> findByArtist(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size,
-            @AuthenticationPrincipal CustomerEntity customer) {
+            @PathVariable UUID artistId) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        PageResponseDTO<TrackResponseDTO> response = trackService.findByArtistId(pageable, customer.getArtistProfile().getId());
+        PageResponseDTO<TrackResponseDTO> response = trackService.findByArtistId(pageable, artistId);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

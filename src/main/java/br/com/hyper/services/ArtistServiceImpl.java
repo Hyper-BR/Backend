@@ -65,6 +65,13 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
+    public ArtistResponseDTO findById(UUID id) {
+        ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(id);
+
+        return modelMapper.map(artist, ArtistResponseDTO.class);
+    }
+
+    @Override
     public ArtistResponseDTO update(UUID id, ArtistRequestDTO artistDTO) {
         ArtistEntity artistEntity = findByIdOrThrowArtistDataNotFoundException(id);
 
