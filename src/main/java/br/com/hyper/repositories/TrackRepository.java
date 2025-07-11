@@ -20,4 +20,11 @@ public interface TrackRepository extends UuidRepository<TrackEntity> {
     @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId")
     Page<TrackEntity> findByArtistId(@Param("artistId") UUID artistId, Pageable pageable);
 
+    @Query("select DISTINCT t" +
+           " FROM TrackEntity t" +
+           " LEFT JOIN t.artists a" +
+           " WHERE lower(t.title) like lower(concat('%', :q, '%'))" +
+           " or lower(a.username) like lower(concat('%', :q, '%'))")
+    Page<TrackEntity> searchByTitleOrArtist(@Param("q") String q, Pageable pageable);
+
 }
