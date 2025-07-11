@@ -20,6 +20,7 @@ spring:
     multipart:
       max-file-size: 120MB
       max-request-size: 120MB
+
 #  mail:
 #    host: smtp.gmail.com
 #    port: 587
@@ -31,6 +32,15 @@ spring:
 #          auth: true
 #          starttls:
 #            enable: true
+
+stripe:
+  webhook:
+    secret: "TODO"
+  secret:
+    key: "TODO"
+  checkout:
+    success-url: "http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}"
+    cancel-url: "http://localhost:3000/payment/cancel"
 
 api:
   security:

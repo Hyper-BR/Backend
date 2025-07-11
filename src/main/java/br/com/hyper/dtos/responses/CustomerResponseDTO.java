@@ -1,5 +1,6 @@
 package br.com.hyper.dtos.responses;
 
+import br.com.hyper.dtos.SubscriptionDTO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ public class CustomerResponseDTO {
     private String name;
     private String email;
     private String birthDate;
-    private SubscriptionResponseDTO subscription;
+    private SubscriptionDTO subscription;
     private String country;
     private String avatarUrl;
     private ArtistResponseDTO artistProfile;

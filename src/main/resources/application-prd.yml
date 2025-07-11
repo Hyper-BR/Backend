@@ -32,6 +32,15 @@ spring:
 #          starttls:
 #            enable: true
 
+stripe:
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET} # TODO
+  secret:
+    key: ${STRIPE_SECRET_KEY} # TODO
+  checkout:
+    success-url: "https://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}" # TODO
+    cancel-url: "https://localhost:3000/cancel" # TODO
+
 api:
   security:
     token:
