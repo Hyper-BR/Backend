@@ -25,6 +25,9 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @Column(name = "USERNAME", nullable = false, unique = true)
     private String username;
 
+    @Column(name = "EMAIL", nullable = false, unique = true)
+    private String email;
+
     @OneToOne
     @JoinColumn(name = "CUSTOMER_ID", nullable = false, unique = true)
     private CustomerEntity customer;
