@@ -52,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
     public CustomerResponseDTO register(CustomerRequestDTO customer, HttpServletResponse http) {
         CustomerEntity customerEntity;
         try {
-            SubscriptionEntity subscription = subscriptionRepository.findById(customer.getSubscription()).orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
+            SubscriptionEntity subscription = subscriptionRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
 
             if (customerRepository.findByEmail(customer.getEmail()).isPresent()){
                 throw new CustomerException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());

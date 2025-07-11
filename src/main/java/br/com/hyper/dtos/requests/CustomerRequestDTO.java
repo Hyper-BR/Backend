@@ -13,8 +13,6 @@ public class CustomerRequestDTO {
 
     private String birthDate;
 
-    private Long subscription;
-
     private String country;
 
     private String avatarUrl;
