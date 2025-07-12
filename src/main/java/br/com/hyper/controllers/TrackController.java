@@ -56,6 +56,14 @@ public class TrackController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping(value = "/track/{trackId}")
+    public ResponseEntity<TrackResponseDTO> findById(@PathVariable UUID trackId) {
+
+        TrackResponseDTO response = trackService.findById(trackId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PutMapping(value = "/track/{id}")
     public ResponseEntity<TrackResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid TrackRequestDTO track) {
 

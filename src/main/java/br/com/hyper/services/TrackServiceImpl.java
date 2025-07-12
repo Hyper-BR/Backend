@@ -9,6 +9,7 @@ import br.com.hyper.entities.ArtistEntity;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.repositories.TrackRepository;
+import br.com.hyper.utils.PaginationMapper;
 import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class TrackServiceImpl implements TrackService {
 
     private final TrackRepository trackRepository;
     private final ModelMapper modelMapper;
+    private final PaginationMapper paginationMapper;
 
     @Override
     public PageResponseDTO<TrackResponseDTO> find(Pageable pageable) {
@@ -60,24 +62,14 @@ public class TrackServiceImpl implements TrackService {
     public PageResponseDTO<TrackResponseDTO> findByArtistId(Pageable pageable, UUID customerId) {
         Page<TrackEntity> page = trackRepository.findByArtistId(customerId, pageable);
 
-        List<TrackResponseDTO> content = page.getContent().stream()
-                .map(track -> {
-                    TrackResponseDTO dto = modelMapper.map(track, TrackResponseDTO.class);
-                    dto.setArtists(track.getArtists().stream()
-                            .map(artist -> new ArtistResponseDTO(artist.getId(),artist.getUsername()))
-                            .toList());
-                    return dto;
-                })
-                .toList();
+        return paginationMapper.map(page,TrackResponseDTO.class);
+    }
 
+    @Override
+    public TrackResponseDTO findById(UUID trackId) {
+        TrackEntity track = findByIdOrThrowTrackDataNotFoundException(trackId);
 
-        return PageResponseDTO.<TrackResponseDTO>builder()
-                .content(content)
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .build();
+        return modelMapper.map(track, TrackResponseDTO.class);
     }
 
     @Override
