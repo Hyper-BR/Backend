@@ -47,6 +47,7 @@ public class ArtistServiceImpl implements ArtistService {
             artist.setUsername(artistDTO.getUsername().trim());
             artist.setIsVerified(false);
             artist.setCustomer(customer);
+            artist.setEmail(customer.getEmail());
 
             artist = artistRepository.save(artist);
 
