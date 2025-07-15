@@ -1,15 +1,15 @@
 spring:
   jpa:
     database: POSTGRESQL
-    show-sql: false
-    generate-ddl: true
+    show-sql: true
+    generate-ddl: false
     hibernate:
       ddl-auto: none
   datasource:
     plataform: postgres
-    url: jdbc:postgresql://hyper-tst.cj8syw0omc8e.us-east-1.rds.amazonaws.com:5432/hyper
-    username: hyperUser # Alterar
-    password: hyperPass # Alterar
+    url: jdbc:postgresql://localhost:5432/hyper
+    username: hyperUser
+    password: hyperPass
     driverClassName: org.postgresql.Driver
   flyway:
     enabled: true
@@ -20,6 +20,7 @@ spring:
     multipart:
       max-file-size: 120MB
       max-request-size: 120MB
+
 #  mail:
 #    host: smtp.gmail.com
 #    port: 587
@@ -34,12 +35,12 @@ spring:
 
 stripe:
   webhook:
-    secret: ${STRIPE_SECRET} # TODO
+    secret: ${STRIPE_SECRET}
   secret:
-    key: ${STRIPE_SECRET} # TODO
+    key: ${STRIPE_SECRET}
   checkout:
-    success-url: "https://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}" # TODO
-    cancel-url: "https://localhost:3000/cancel" # TODO
+    success-url: "http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}"
+    cancel-url: "http://localhost:3000/payment/cancel"
 
 api:
   security:
@@ -47,4 +48,4 @@ api:
       secret: ${JWT_SECRET:lala}
 
 server:
-  port: 8080 # 443
+  port: 8080
