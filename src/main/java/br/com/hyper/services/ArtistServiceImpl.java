@@ -33,6 +33,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
+    private final CustomerRepository customerRepository;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -46,16 +47,20 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public ArtistResponseDTO becomeArtist(ArtistRequestDTO artistDTO, CustomerEntity customer) {
         try {
-            if (artistRepository.existsByCustomerId(customer.getId())) {
+            if (artistRepository.existsByCustomer(customer)) {
                 throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, "Este usuário já possui um perfil de artista.");
             }
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setUsername(artistDTO.getUsername().trim());
             artist.setIsVerified(false);
+
             customer.setIsArtist(true);
             customer.setIsLabel(false);
 
+            customer = customerRepository.save(customer);
+
+            artist.setCustomer(customer);
             artist = artistRepository.save(artist);
 
             return modelMapper.map(artist, ArtistResponseDTO.class);
