@@ -34,8 +34,8 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private ReleaseType type;
 
-    @Column(name = "IMAGE", nullable = false)
-    private String image;
+    @Column(name = "COVER_URL", nullable = false)
+    private String coverUrl;
 
     @Column(name = "UPC", nullable = false)
     private String upc;

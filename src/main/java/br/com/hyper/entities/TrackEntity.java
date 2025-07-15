@@ -1,6 +1,7 @@
 package br.com.hyper.entities;
 
 import br.com.hyper.enums.Privacy;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -9,8 +10,6 @@ import org.hibernate.type.SqlTypes;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Duration;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,9 +30,6 @@ public class TrackEntity extends BaseEntity implements Serializable {
 
     @Column(name = "TITLE", nullable = false)
     private String title;
-
-    @Column(name = "COVER_URL", nullable = false)
-    private String coverUrl;
 
     @Column(name = "FILE_URL", nullable = false)
     private String fileUrl;
@@ -71,4 +67,8 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "PRIVACY", nullable = false)
     private Privacy privacy;
 
+    @JsonProperty("coverUrl")
+    public String getCover() {
+        return (release != null) ? release.getCoverUrl() : null;
+    }
 }

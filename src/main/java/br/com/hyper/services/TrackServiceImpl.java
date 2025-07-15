@@ -3,8 +3,6 @@ package br.com.hyper.services;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
-import br.com.hyper.dtos.responses.ArtistResponseDTO;
-import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -80,7 +77,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Resource loadAudio(UUID id) {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
-        String filePath = track.getRelease().getImage();
+        String filePath = track.getRelease().getCoverUrl();
 
         try {
             Path path = Paths.get(filePath);

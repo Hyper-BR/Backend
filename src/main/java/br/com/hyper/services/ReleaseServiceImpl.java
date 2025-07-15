@@ -24,7 +24,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -73,10 +72,10 @@ public class ReleaseServiceImpl implements ReleaseService {
 
             Path releaseDir = createReleaseDirectory(release.getUpc());
 
-            Path coverPath = processCoverFile(releaseDTO.getCover(), releaseDir);
-            release.setImage(coverPath.toString());
+            String coverRelativePath = processCoverFile(releaseDTO.getCover(), releaseDir);
+            release.setCoverUrl(coverRelativePath);
 
-            List<TrackEntity> savedTracks = processTracks(customer, releaseDTO.getTracks(), release, releaseDir, coverPath.toString());
+            List<TrackEntity> savedTracks = processTracks(customer, releaseDTO.getTracks(), release, releaseDir, coverRelativePath);
 
             int totalDuration = savedTracks.stream().mapToInt(TrackEntity::getDurationInSeconds).sum();
             release.setTracks(savedTracks);
@@ -105,7 +104,7 @@ public class ReleaseServiceImpl implements ReleaseService {
         return dir;
     }
 
-    private Path processCoverFile(MultipartFile coverFile, Path dir) throws IOException {
+    private String processCoverFile(MultipartFile coverFile, Path dir) throws IOException {
         if (coverFile == null || coverFile.isEmpty()) {
             throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "Capa não enviada.");
         }
@@ -118,8 +117,10 @@ public class ReleaseServiceImpl implements ReleaseService {
         log.info("Salvando capa em: {}", coverPath.toAbsolutePath());
         coverFile.transferTo(coverPath.toFile());
 
-        return coverPath;
+        Path relativePath = Paths.get("uploads", "releases", dir.getFileName().toString(), coverFileName);
+        return relativePath.toString().replace("\\", "/");
     }
+
 
 
     private List<TrackEntity> processTracks(CustomerEntity customer,
@@ -157,7 +158,6 @@ public class ReleaseServiceImpl implements ReleaseService {
             track.setFileUrl(trackPath.toString());
             track.setPlays(BigInteger.ZERO);
             track.setPrivacy(trackDTO.getPrivacy());
-            track.setCoverUrl(coverUrl); 
 
             UUID ownerArtistId = customer.getArtistProfile().getId();
             ArtistEntity ownerArtist = findByIdOrThrowArtistDataNotFoundException(ownerArtistId);
