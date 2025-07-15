@@ -63,6 +63,8 @@ public class AuthServiceImpl implements AuthService {
             customerEntity.setRole(UserRole.CUSTOMER);
             customerEntity.setSubscription(subscription);
             customerEntity.setPassword(new BCryptPasswordEncoder().encode(customer.getPassword()));
+            customerEntity.setIsArtist(false);
+            customerEntity.setIsLabel(false);
             customerEntity = customerRepository.save(customerEntity);
 
             Cookie accessCookie = tokenService.generateAccessTokenCookie(customerEntity);

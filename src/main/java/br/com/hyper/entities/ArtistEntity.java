@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "ARTISTS")
 public class ArtistEntity extends CustomerEntity implements Serializable {
 
     @Column(name = "USERNAME", nullable = false, unique = true)

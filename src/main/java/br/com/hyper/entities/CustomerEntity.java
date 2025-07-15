@@ -57,6 +57,12 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @Column(name = "BIOGRAPHY")
     private String biography;
 
+    @Column(name = "IS_ARTIST", nullable = false)
+    private Boolean isArtist;
+
+    @Column(name = "IS_LABEL", nullable = false)
+    private Boolean isLabel;
+
     @OneToMany(mappedBy = "customer")
     private List<PlaylistEntity> playlists;
 
