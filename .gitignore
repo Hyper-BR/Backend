@@ -40,3 +40,4 @@ build/
 *.log
 
 uploads/
+/src/main/java/keys/*

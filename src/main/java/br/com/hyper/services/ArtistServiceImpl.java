@@ -34,19 +34,16 @@ public class ArtistServiceImpl implements ArtistService {
 
     private final PaginationMapper paginationMapper;
 
-    private final CustomerRepository customerRepository;
-
     @Override
     public ArtistResponseDTO becomeArtist(ArtistRequestDTO artistDTO, CustomerEntity customer) {
         try {
-            if (artistRepository.existsByCustomer(customer)) {
+            if (artistRepository.existsByCustomerId(customer.getId())) {
                 throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, "Este usuário já possui um perfil de artista.");
             }
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setUsername(artistDTO.getUsername().trim());
             artist.setIsVerified(false);
-            artist.setCustomer(customer);
             artist.setEmail(customer.getEmail());
 
             artist = artistRepository.save(artist);

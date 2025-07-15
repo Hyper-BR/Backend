@@ -5,7 +5,6 @@ import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
-import br.com.hyper.entities.ArtistEntity;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
 import br.com.hyper.repositories.TrackRepository;
@@ -89,9 +88,6 @@ public class TrackServiceImpl implements TrackService {
 
         trackCurrent.setTitle(track.getTitle());
         trackCurrent.setGenre(track.getGenre());
-        trackCurrent.setFileUrl(track.getFileUrl());
-        trackCurrent.setExplicit(track.isExplicit());
-        trackCurrent.setLanguage(track.getLanguage());
 
         TrackEntity trackEntity = trackRepository.save(trackCurrent);
         return modelMapper.map(trackEntity, TrackResponseDTO.class);
@@ -100,7 +96,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Resource loadAudio(UUID id) {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
-        String filePath = track.getFileUrl();
+        String filePath = track.getRelease().getImage();
 
         try {
             Path path = Paths.get(filePath);

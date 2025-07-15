@@ -34,11 +34,14 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private ReleaseType type;
 
-    @Column(name = "COVER_URL", nullable = false)
-    private String coverUrl;
+    @Column(name = "IMAGE", nullable = false)
+    private String image;
 
     @Column(name = "UPC", nullable = false)
     private String upc;
+
+    @Column(name = "OWNER", nullable = false)
+    private UUID owner;
 
     @Column(name = "RELEASE_DATE", nullable = false)
     private ZonedDateTime releaseDate;
@@ -49,4 +52,7 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
 
     @OneToMany(mappedBy = "release", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TrackEntity> tracks;
+
+    @Column(name = "DESCRIPTION", nullable = false)
+    private String description;
 }
