@@ -19,7 +19,6 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "CUSTOMERS")
 public class CustomerEntity extends BaseEntity implements Serializable, UserDetails {
 
@@ -53,6 +52,10 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
 
     @JoinColumn(name = "ROLE", nullable = false)
     private UserRole role;
+
+    @OneToOne(mappedBy = "customer")
+    @JoinColumn(name = "customer_id", nullable = false, unique = true)
+    private ArtistEntity artistProfile;
 
     @Column(name = "BIOGRAPHY")
     private String biography;

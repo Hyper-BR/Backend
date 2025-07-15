@@ -33,6 +33,14 @@ public class PlaylistEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private CustomerEntity customer;
 
+    @ManyToMany
+    @JoinTable(
+            name = "playlist_collaborators",
+            joinColumns = @JoinColumn(name = "playlist_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_id")
+    )
+    private List<CustomerEntity> collaborators;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "PLAYLIST_TRACK",
