@@ -32,6 +32,9 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
+    @Column(name = "COVER_URL", nullable = false)
+    private String coverUrl;
+
     @Column(name = "FILE_URL", nullable = false)
     private String fileUrl;
 
@@ -45,7 +48,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
     private BigDecimal price;
 
     @Column(name = "TAGS", nullable = false)
-    private List<String> tags;
+    private String tags;
 
     @Column(name = "ISRC", nullable = false)
     private String isrc;

@@ -27,11 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -48,84 +50,139 @@ public class ReleaseServiceImpl implements ReleaseService {
 
     @Override
     public ReleaseResponseDTO save(ReleaseRequestDTO releaseDTO, CustomerEntity customer) {
+
+        UUID owner = null;
         try {
-            ArtistEntity owner = findByIdOrThrowArtistDataNotFoundException(customer.getId());
+            if(Boolean.TRUE.equals(customer.getIsLabel())){
+//                ArtistEntity label = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
+
+            } else if (Boolean.TRUE.equals(customer.getIsArtist())) {
+                ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
+                owner = artist.getId();
+            } else {
+                throw new TrackException(ErrorCodes.DATA_NOT_FOUND, "Usuário não pode subir arquivos.");
+            }
 
             ReleaseEntity release = new ReleaseEntity();
-            release.setUpc("1234567890123"); // TODO: gerar dinamicamente
+            release.setUpc("1234567890123"); // TODO: Gerar UPC dinamicamente
             release.setReleaseDate(ZonedDateTime.now());
             release.setStatus(ReleaseStatus.DRAFT);
-            release.setOwner(owner.getId());
+            release.setOwner(owner);
             release.setDescription(releaseDTO.getDescription());
+            release.setTitle(releaseDTO.getTracks().getFirst().getTitle());
 
-            Path dir = Paths.get("uploads", release.getUpc());
-            Files.createDirectories(dir);
+            Path releaseDir = createReleaseDirectory(release.getUpc());
 
-            MultipartFile coverFile = releaseDTO.getImage();
-            if (coverFile == null || coverFile.isEmpty()) {
-                throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "Imagem da capa ausente.");
-            }
+            Path coverPath = processCoverFile(releaseDTO.getCover(), releaseDir);
+            release.setImage(coverPath.toString());
 
-            String coverExt = getExtension(coverFile.getOriginalFilename());
-            String coverFileName = "cover." + coverExt;
-            Path coverPath = dir.resolve(coverFileName);
-            coverFile.transferTo(coverPath.toFile());
+            List<TrackEntity> savedTracks = processTracks(customer, releaseDTO.getTracks(), release, releaseDir, coverPath.toString());
 
-            String coverUrl = coverPath.toString();
-            release.setImage(coverUrl);
-
-            List<TrackEntity> savedTracks = new ArrayList<>();
-            int totalDurationSeconds = 0;
-
-            for (TrackRequestDTO trackDTO : releaseDTO.getTracks()) {
-                MultipartFile audioFile = trackDTO.getFile();
-                if (audioFile == null || audioFile.isEmpty()) {
-                    throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "Arquivo da faixa ausente.");
-                }
-
-                String trackExt = getExtension(audioFile.getOriginalFilename());
-                String trackFileName = sanitize(trackDTO.getTitle()) + "." + trackExt;
-                Path trackPath = dir.resolve(trackFileName);
-                audioFile.transferTo(trackPath.toFile());
-
-                File tempFile = trackPath.toFile();
-                AudioFile audio = AudioFileIO.read(tempFile);
-                int duration = audio.getAudioHeader().getTrackLength();
-                totalDurationSeconds += duration;
-
-                TrackEntity track = new TrackEntity();
-                track.setTitle(trackDTO.getTitle());
-                track.setDurationInSeconds(duration);
-                track.setPrice(BigDecimal.valueOf(1.99));
-                track.setGenre(trackDTO.getGenre());
-                track.setTags(trackDTO.getTags());
-                track.setRelease(release);
-                track.setIsrc("BR-KRVO-23-" + UUID.randomUUID().toString().substring(0, 6));
-                track.setFileUrl(trackPath.toString());
-
-                List<ArtistEntity> artists = trackDTO.getArtists().stream()
-                        .map(artistDTO -> findByIdOrThrowArtistDataNotFoundException(artistDTO.getId()))
-                        .toList();
-
-                track.setArtists(artists);
-
-                trackRepository.save(track);
-                savedTracks.add(track);
-            }
-
-            ReleaseType releaseType = detectReleaseType(savedTracks.size(), totalDurationSeconds);
+            int totalDuration = savedTracks.stream().mapToInt(TrackEntity::getDurationInSeconds).sum();
             release.setTracks(savedTracks);
-            release.setType(releaseType);
+            release.setType(detectReleaseType(savedTracks.size(), totalDuration));
 
             releaseRepository.save(release);
-
             return modelMapper.map(release, ReleaseResponseDTO.class);
 
         } catch (IOException | CannotReadException | TagException |
                  InvalidAudioFrameException | ReadOnlyFileException e) {
-            throw new TrackException(ErrorCodes.FILE_READ_ERROR, "Erro ao processar release");
+            throw new TrackException(ErrorCodes.FILE_READ_ERROR, "Erro ao processar os arquivos.");
         }
     }
+
+    private Path createReleaseDirectory(String upc) throws IOException {
+        String basePath = System.getProperty("user.dir");
+        Path dir = Paths.get(basePath, "uploads", "releases", upc);
+
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
+            log.info("Diretório criado: {}", dir.toAbsolutePath());
+        } else {
+            log.info("Diretório já existe: {}", dir.toAbsolutePath());
+        }
+
+        return dir;
+    }
+
+    private Path processCoverFile(MultipartFile coverFile, Path dir) throws IOException {
+        if (coverFile == null || coverFile.isEmpty()) {
+            throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "Capa não enviada.");
+        }
+
+        String coverExt = getExtension(coverFile.getOriginalFilename());
+        String coverFileName = "cover." + coverExt;
+        Path coverPath = dir.resolve(coverFileName);
+
+        Files.createDirectories(dir);
+        log.info("Salvando capa em: {}", coverPath.toAbsolutePath());
+        coverFile.transferTo(coverPath.toFile());
+
+        return coverPath;
+    }
+
+
+    private List<TrackEntity> processTracks(CustomerEntity customer,
+                                            List<TrackRequestDTO> trackDTOs,
+                                            ReleaseEntity release,
+                                            Path dir,
+                                            String coverUrl)
+            throws IOException, CannotReadException, TagException,
+            InvalidAudioFrameException, ReadOnlyFileException {
+
+        List<TrackEntity> savedTracks = new ArrayList<>();
+
+        for (TrackRequestDTO trackDTO : trackDTOs) {
+            MultipartFile audioFile = trackDTO.getFile();
+            if (audioFile == null || audioFile.isEmpty()) {
+                throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "Faixa não enviada.");
+            }
+
+            String trackExt = getExtension(audioFile.getOriginalFilename());
+            String sanitizedTitle = sanitize(trackDTO.getTitle());
+            Path trackPath = dir.resolve(sanitizedTitle + "." + trackExt);
+            audioFile.transferTo(trackPath.toFile());
+
+            AudioFile audio = AudioFileIO.read(trackPath.toFile());
+            int duration = audio.getAudioHeader().getTrackLength();
+
+            TrackEntity track = new TrackEntity();
+            track.setTitle(trackDTO.getTitle());
+            track.setDurationInSeconds(duration);
+            track.setPrice(BigDecimal.valueOf(1.99));
+            track.setGenre(trackDTO.getGenre());
+            track.setTags(String.valueOf(trackDTO.getTags()));
+            track.setRelease(release);
+            track.setIsrc("BR-KRVO-23-" + UUID.randomUUID().toString().substring(0, 6));
+            track.setFileUrl(trackPath.toString());
+            track.setPlays(BigInteger.ZERO);
+            track.setPrivacy(trackDTO.getPrivacy());
+            track.setCoverUrl(coverUrl); 
+
+            UUID ownerArtistId = customer.getArtistProfile().getId();
+            ArtistEntity ownerArtist = findByIdOrThrowArtistDataNotFoundException(ownerArtistId);
+
+            List<ArtistEntity> artists;
+            if (trackDTO.getArtists() == null || trackDTO.getArtists().isEmpty()) {
+                artists = List.of(ownerArtist);
+            } else {
+                artists = trackDTO.getArtists().stream()
+                        .map(artistDTO -> findByIdOrThrowArtistDataNotFoundException(artistDTO.getId()))
+                        .collect(Collectors.toList());
+
+                if (artists.stream().noneMatch(a -> a.getId().equals(ownerArtistId))) {
+                    artists.add(ownerArtist);
+                }
+            }
+
+            track.setArtists(artists);
+            savedTracks.add(track);
+        }
+
+        return savedTracks;
+    }
+
+
 
     private String getExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) return "mp3";

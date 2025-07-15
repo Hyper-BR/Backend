@@ -4,6 +4,7 @@ import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
+import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.PlaylistNotFoundException;
@@ -37,24 +38,7 @@ public class TrackServiceImpl implements TrackService {
     public PageResponseDTO<TrackResponseDTO> find(Pageable pageable) {
         Page<TrackEntity> page = trackRepository.findAll(pageable);
 
-        List<TrackResponseDTO> content = page.getContent().stream()
-                .map(track -> {
-                    TrackResponseDTO dto = modelMapper.map(track, TrackResponseDTO.class);
-                    dto.setArtists(track.getArtists().stream()
-                            .map(artist -> new ArtistResponseDTO(artist.getId(),artist.getUsername()))
-                            .toList());
-                    return dto;
-                })
-                .toList();
-
-
-        return PageResponseDTO.<TrackResponseDTO>builder()
-                .content(content)
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .build();
+        return paginationMapper.map(page, TrackResponseDTO.class);
     }
 
     @Override

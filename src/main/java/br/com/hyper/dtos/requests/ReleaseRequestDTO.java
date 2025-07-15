@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class ReleaseRequestDTO {
 
-    private MultipartFile image;
-    private List<TrackRequestDTO> tracks;
+    private MultipartFile cover;
     private String description;
+    private List<TrackRequestDTO> tracks;
 }
