@@ -69,6 +69,6 @@ public class TrackEntity extends BaseEntity implements Serializable {
 
     @JsonProperty("coverUrl")
     public String getCover() {
-        return (release != null) ? release.getCoverUrl() : null;
+        return release.getCoverUrl();
     }
 }

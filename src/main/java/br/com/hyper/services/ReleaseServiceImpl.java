@@ -53,13 +53,13 @@ public class ReleaseServiceImpl implements ReleaseService {
         UUID owner = null;
         try {
             if(Boolean.TRUE.equals(customer.getIsLabel())){
-//                ArtistEntity label = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
-
+                ArtistEntity label = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId()); // TODO
+                owner = label.getId();
             } else if (Boolean.TRUE.equals(customer.getIsArtist())) {
                 ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
                 owner = artist.getId();
             } else {
-                throw new TrackException(ErrorCodes.DATA_NOT_FOUND, "Usuário não pode subir arquivos.");
+                throw new TrackException(ErrorCodes.DATA_NOT_FOUND, "User can not upload files.");
             }
 
             ReleaseEntity release = new ReleaseEntity();
@@ -73,9 +73,9 @@ public class ReleaseServiceImpl implements ReleaseService {
             Path releaseDir = createReleaseDirectory(release.getUpc());
 
             String coverRelativePath = processCoverFile(releaseDTO.getCover(), releaseDir);
-            release.setCoverUrl(coverRelativePath);
+            release.setCoverUrl("/" + coverRelativePath);
 
-            List<TrackEntity> savedTracks = processTracks(customer, releaseDTO.getTracks(), release, releaseDir, coverRelativePath);
+            List<TrackEntity> savedTracks = processTracks(customer, releaseDTO.getTracks(), release, releaseDir);
 
             int totalDuration = savedTracks.stream().mapToInt(TrackEntity::getDurationInSeconds).sum();
             release.setTracks(savedTracks);
@@ -123,11 +123,7 @@ public class ReleaseServiceImpl implements ReleaseService {
 
 
 
-    private List<TrackEntity> processTracks(CustomerEntity customer,
-                                            List<TrackRequestDTO> trackDTOs,
-                                            ReleaseEntity release,
-                                            Path dir,
-                                            String coverUrl)
+    private List<TrackEntity> processTracks(CustomerEntity customer, List<TrackRequestDTO> trackDTOs, ReleaseEntity release, Path dir)
             throws IOException, CannotReadException, TagException,
             InvalidAudioFrameException, ReadOnlyFileException {
 

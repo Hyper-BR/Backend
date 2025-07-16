@@ -1,5 +1,6 @@
 package br.com.hyper.entities;
 
+import br.com.hyper.constants.DefaultAssets;
 import br.com.hyper.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,7 +30,7 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     private UUID id;
 
     @Column(name = "AVATAR_URL")
-    private String avatarUrl;
+    private String avatarUrl = DefaultAssets.AVATAR_URL;
 
     @Column(name = "NAME", nullable = false)
     private String name;
