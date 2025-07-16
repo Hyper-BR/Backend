@@ -20,4 +20,6 @@ public class CustomerResponseDTO {
     private String country;
     private String avatarUrl;
     private ArtistResponseDTO artistProfile;
+    private boolean isArtist;
+    private boolean isLabel;
 }

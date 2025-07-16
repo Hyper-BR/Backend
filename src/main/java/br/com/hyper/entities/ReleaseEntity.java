@@ -1,7 +1,9 @@
 package br.com.hyper.entities;
 
+import br.com.hyper.constants.DefaultAssets;
 import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -35,10 +37,13 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     private ReleaseType type;
 
     @Column(name = "COVER_URL", nullable = false)
-    private String coverUrl;
+    private String coverUrl = DefaultAssets.COVER_URL;
 
     @Column(name = "UPC", nullable = false)
     private String upc;
+
+    @Column(name = "OWNER", nullable = false)
+    private UUID owner;
 
     @Column(name = "RELEASE_DATE", nullable = false)
     private ZonedDateTime releaseDate;
@@ -49,4 +54,7 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
 
     @OneToMany(mappedBy = "release", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TrackEntity> tracks;
+
+    @Column(name = "DESCRIPTION", nullable = false)
+    private String description;
 }

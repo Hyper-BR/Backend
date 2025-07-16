@@ -1,5 +1,6 @@
 package br.com.hyper.services;
 
+import br.com.hyper.constants.DefaultAssets;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.requests.AuthRequestDTO;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
@@ -28,6 +29,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,6 +65,10 @@ public class AuthServiceImpl implements AuthService {
             customerEntity.setRole(UserRole.CUSTOMER);
             customerEntity.setSubscription(subscription);
             customerEntity.setPassword(new BCryptPasswordEncoder().encode(customer.getPassword()));
+            customerEntity.setIsArtist(false);
+            customerEntity.setIsLabel(false);
+            customerEntity.setPlaylists(new ArrayList<>());
+            customerEntity.setAvatarUrl(DefaultAssets.AVATAR_URL);
             customerEntity = customerRepository.save(customerEntity);
 
             Cookie accessCookie = tokenService.generateAccessTokenCookie(customerEntity);

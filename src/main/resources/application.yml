@@ -35,9 +35,9 @@ spring:
 
 stripe:
   webhook:
-    secret: "TODO"
+    secret: ${STRIPE_SECRET}
   secret:
-    key: "TODO"
+    key: ${STRIPE_SECRET}
   checkout:
     success-url: "http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}"
     cancel-url: "http://localhost:3000/payment/cancel"

@@ -1,5 +1,6 @@
 package br.com.hyper.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -25,14 +26,16 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @Column(name = "USERNAME", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
-    private String email;
-
     @OneToOne
     @JoinColumn(name = "CUSTOMER_ID", nullable = false, unique = true)
     private CustomerEntity customer;
 
     @Column(name = "IS_VERIFIED", nullable = false)
     private Boolean isVerified;
+
+    @JsonProperty("avatarUrl")
+    public String getAvatar() {
+        return customer.getAvatarUrl();
+    }
 
 }

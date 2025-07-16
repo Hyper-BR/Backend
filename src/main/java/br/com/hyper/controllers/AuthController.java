@@ -5,7 +5,6 @@ import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.AuthService;
-import br.com.hyper.services.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(value = "/auth/register")
-    public ResponseEntity<CustomerResponseDTO> save(@RequestBody @Valid CustomerRequestDTO customer, HttpServletResponse http){
+    public ResponseEntity<CustomerResponseDTO> register(@RequestBody @Valid CustomerRequestDTO customer, HttpServletResponse http){
 
         CustomerResponseDTO response = authService.register(customer, http);
 
