@@ -23,15 +23,15 @@ public class PlaylistEntity extends BaseEntity implements Serializable {
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    private CustomerEntity customer;
+
     @Column(name = "NAME", nullable = false)
     private String name;
 
     @Column(name = "DESCRIPTION")
     private String description;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-    private CustomerEntity customer;
 
     @ManyToMany
     @JoinTable(

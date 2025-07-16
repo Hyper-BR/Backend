@@ -68,7 +68,6 @@ public class TrackServiceImpl implements TrackService {
         TrackEntity trackCurrent = findByIdOrThrowTrackDataNotFoundException(id);
 
         trackCurrent.setTitle(track.getTitle());
-        trackCurrent.setGenre(track.getGenre());
 
         TrackEntity trackEntity = trackRepository.save(trackCurrent);
         return modelMapper.map(trackEntity, TrackResponseDTO.class);

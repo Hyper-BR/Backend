@@ -1,5 +1,6 @@
 package br.com.hyper.entities;
 
+import br.com.hyper.constants.DistribuitionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,7 +28,7 @@ public class DistributionRequestEntity extends BaseEntity implements Serializabl
     private String targetDsps;
 
     @Column(name = "STATUS")
-    private String status;
+    private DistribuitionStatus status;
 
     @Column(name = "SUBMITTED_AT")
     private ZonedDateTime submittedAt;

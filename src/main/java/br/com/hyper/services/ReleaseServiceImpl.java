@@ -77,7 +77,7 @@ public class ReleaseServiceImpl implements ReleaseService {
 
             List<TrackEntity> savedTracks = processTracks(customer, releaseDTO.getTracks(), release, releaseDir);
 
-            int totalDuration = savedTracks.stream().mapToInt(TrackEntity::getDurationInSeconds).sum();
+            int totalDuration = savedTracks.stream().mapToInt(TrackEntity::getDuration).sum();
             release.setTracks(savedTracks);
             release.setType(detectReleaseType(savedTracks.size(), totalDuration));
 
@@ -145,10 +145,8 @@ public class ReleaseServiceImpl implements ReleaseService {
 
             TrackEntity track = new TrackEntity();
             track.setTitle(trackDTO.getTitle());
-            track.setDurationInSeconds(duration);
+            track.setDuration(duration);
             track.setPrice(BigDecimal.valueOf(1.99));
-            track.setGenre(trackDTO.getGenre());
-            track.setTags(String.valueOf(trackDTO.getTags()));
             track.setRelease(release);
             track.setIsrc("BR-KRVO-23-" + UUID.randomUUID().toString().substring(0, 6));
             track.setFileUrl(trackPath.toString());
