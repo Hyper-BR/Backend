@@ -55,6 +55,14 @@ public class TrackEntity extends BaseEntity implements Serializable {
 
     @ManyToMany
     @JoinTable(
+            name = "TRACK_GENRES",
+            joinColumns = @JoinColumn(name = "TRACK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GENRE_ID")
+    )
+    private List<GenreEntity> genres;
+
+    @ManyToMany
+    @JoinTable(
             name = "track_artists",
             joinColumns = @JoinColumn(name = "track_id"),
             inverseJoinColumns = @JoinColumn(name = "artist_id")

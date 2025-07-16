@@ -67,6 +67,10 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
     private ArtistEntity artistProfile;
 
+    @OneToOne(mappedBy = "customer")
+    @JoinColumn(name = "customer_id", nullable = false, unique = true)
+    private LabelEntity labelProfile;
+
     @OneToMany(mappedBy = "customer")
     private List<PlaylistEntity> playlists;
 
@@ -76,6 +80,8 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_CUSTOMER"), new SimpleGrantedAuthority("ROLE_ARTIST"));
         } else if(this.role == UserRole.ARTIST) {
             return List.of(new SimpleGrantedAuthority("ROLE_ARTIST"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+        } else if(this.role == UserRole.LABEL) {
+            return List.of(new SimpleGrantedAuthority("ROLE_LABEL"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
         }
         return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
     }

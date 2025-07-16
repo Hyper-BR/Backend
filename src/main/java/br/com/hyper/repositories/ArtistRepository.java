@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
 public interface ArtistRepository extends UuidRepository<ArtistEntity> {
 
@@ -17,4 +19,7 @@ public interface ArtistRepository extends UuidRepository<ArtistEntity> {
 
     @Query("SELECT a FROM ArtistEntity a WHERE lower(a.username) like lower(concat('%', :q, '%'))")
     Page<ArtistEntity> searchByName(@Param("q") String q, Pageable pageable);
+
+    @Query(" SELECT CASE WHEN COUNT(t) <= 10 THEN true ELSE false END FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId AND t.privacy = 'PUBLIC'")
+    boolean hasPublicTrackLimit(@Param("artistId") UUID artistId);
 }

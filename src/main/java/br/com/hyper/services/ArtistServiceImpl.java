@@ -2,23 +2,17 @@ package br.com.hyper.services;
 
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
-import br.com.hyper.dtos.requests.CustomerRequestDTO;
-import br.com.hyper.dtos.responses.CustomerResponseDTO;
-import br.com.hyper.enums.UserRole;
-import br.com.hyper.exceptions.ArtistNotFoundException;
-import br.com.hyper.exceptions.InvalidArtistDataException;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
+import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.ArtistRepository;
 import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.utils.PaginationMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -26,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import br.com.hyper.entities.ArtistEntity;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -48,7 +41,11 @@ public class ArtistServiceImpl implements ArtistService {
     public ArtistResponseDTO becomeArtist(ArtistRequestDTO artistDTO, CustomerEntity customer) {
         try {
             if (artistRepository.existsByCustomer(customer)) {
-                throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, "Este usuário já possui um perfil de artista.");
+                throw new GenericException(ErrorCodes.DUPLICATED_DATA, "Este usuário já possui um perfil de artista.");
+            }
+
+            if (Boolean.TRUE.equals(customer.getIsLabel()))  {
+                throw new GenericException(ErrorCodes.INVALID_DATA, "Usuário não pode ser artista e gravadora ao mesmo tempo.");
             }
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
@@ -56,8 +53,6 @@ public class ArtistServiceImpl implements ArtistService {
             artist.setIsVerified(false);
 
             customer.setIsArtist(true);
-            customer.setIsLabel(false);
-
             customer = customerRepository.save(customer);
 
             artist.setCustomer(customer);
@@ -65,7 +60,7 @@ public class ArtistServiceImpl implements ArtistService {
 
             return modelMapper.map(artist, ArtistResponseDTO.class);
         } catch (Exception e) {
-            throw new InvalidArtistDataException(ErrorCodes.INVALID_DATA, e.getMessage());
+            throw new GenericException(ErrorCodes.INVALID_DATA, e.getMessage());
         }
     }
 
@@ -89,7 +84,7 @@ public class ArtistServiceImpl implements ArtistService {
         ArtistEntity artistEntity = findByIdOrThrowArtistDataNotFoundException(id);
 
         if (artistDTO.getUsername() == null || artistDTO.getUsername().trim().isEmpty()) {
-            throw new InvalidArtistDataException(ErrorCodes.INVALID_DATA, "Nome artístico não pode ser vazio.");
+            throw new GenericException(ErrorCodes.INVALID_DATA, "Nome artístico não pode ser vazio.");
         }
 
         try {
@@ -99,7 +94,7 @@ public class ArtistServiceImpl implements ArtistService {
 
             return modelMapper.map(artistEntity, ArtistResponseDTO.class);
         } catch (DataIntegrityViolationException e) {
-            throw new InvalidArtistDataException(ErrorCodes.DUPLICATED_DATA, "Nome artístico já em uso.");
+            throw new GenericException(ErrorCodes.DUPLICATED_DATA, "Nome artístico já em uso.");
         }
     }
 
@@ -112,6 +107,6 @@ public class ArtistServiceImpl implements ArtistService {
 
     private ArtistEntity findByIdOrThrowArtistDataNotFoundException(UUID id) {
         return artistRepository.findById(id).orElseThrow(
-                () -> new ArtistNotFoundException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
+                () -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 }

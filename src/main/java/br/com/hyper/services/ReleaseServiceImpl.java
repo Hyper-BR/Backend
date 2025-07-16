@@ -2,18 +2,15 @@ package br.com.hyper.services;
 
 import br.com.hyper.dtos.requests.ReleaseRequestDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
-import br.com.hyper.entities.CustomerEntity;
-import br.com.hyper.entities.TrackEntity;
+import br.com.hyper.entities.*;
 import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
-import br.com.hyper.exceptions.TrackException;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.responses.ReleaseResponseDTO;
-import br.com.hyper.entities.ArtistEntity;
-import br.com.hyper.entities.ReleaseEntity;
+import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.ArtistRepository;
+import br.com.hyper.repositories.LabelRepository;
 import br.com.hyper.repositories.ReleaseRepository;
-import br.com.hyper.repositories.TrackRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -42,9 +39,9 @@ import org.jaudiotagger.audio.AudioFileIO;
 @RequiredArgsConstructor
 public class ReleaseServiceImpl implements ReleaseService {
 
-    private final TrackRepository trackRepository;
     private final ReleaseRepository releaseRepository;
     private final ArtistRepository artistRepository;
+    private final LabelRepository labelRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -53,22 +50,22 @@ public class ReleaseServiceImpl implements ReleaseService {
         UUID owner = null;
         try {
             if(Boolean.TRUE.equals(customer.getIsLabel())){
-                ArtistEntity label = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId()); // TODO
+                LabelEntity label = findByIdOrThrowLabelDataNotFoundException(customer.getId());
                 owner = label.getId();
             } else if (Boolean.TRUE.equals(customer.getIsArtist())) {
                 ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
                 owner = artist.getId();
             } else {
-                throw new TrackException(ErrorCodes.DATA_NOT_FOUND, "User can not upload files.");
+                throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());
             }
 
-            ReleaseEntity release = new ReleaseEntity();
-            release.setUpc("1234567890123"); // TODO: Gerar UPC dinamicamente
-            release.setReleaseDate(ZonedDateTime.now());
-            release.setStatus(ReleaseStatus.DRAFT);
-            release.setOwner(owner);
-            release.setDescription(releaseDTO.getDescription());
-            release.setTitle(releaseDTO.getTracks().getFirst().getTitle());
+            if(Boolean.TRUE.equals(customer.getIsArtist())) {
+                validateFreeLimitTrackToUpload(customer.getArtistProfile());
+            }
+
+            ReleaseEntity release = createRelease(releaseDTO, owner);
+
+            // TODO: Salvar em bucket
 
             Path releaseDir = createReleaseDirectory(release.getUpc());
 
@@ -86,7 +83,26 @@ public class ReleaseServiceImpl implements ReleaseService {
 
         } catch (IOException | CannotReadException | TagException |
                  InvalidAudioFrameException | ReadOnlyFileException e) {
-            throw new TrackException(ErrorCodes.FILE_READ_ERROR, "Erro ao processar os arquivos.");
+            throw new GenericException(ErrorCodes.FILE_READ_ERROR, ErrorCodes.FILE_READ_ERROR.getMessage());
+        }
+    }
+
+    private ReleaseEntity createRelease(ReleaseRequestDTO releaseDTO, UUID owner) {
+        ReleaseEntity release = new ReleaseEntity();
+        release.setUpc("TODO_" + UUID.randomUUID().toString().substring(0, 9).replace("-", ""));
+        release.setReleaseDate(ZonedDateTime.now());
+        release.setStatus(ReleaseStatus.DRAFT);
+        release.setOwner(owner);
+        release.setDescription(releaseDTO.getDescription());
+        release.setTitle(releaseDTO.getTracks().getFirst().getTitle());
+
+        return release;
+    }
+
+    private void validateFreeLimitTrackToUpload(ArtistEntity artistProfile) {
+        artistRepository.hasPublicTrackLimit(artistProfile.getId());
+        if (artistProfile.getFreeTrackLimit() <= 0) {
+            throw new GenericException(ErrorCodes.LIMIT_EXCEEDED, ErrorCodes.LIMIT_EXCEEDED.getMessage());
         }
     }
 
@@ -96,9 +112,6 @@ public class ReleaseServiceImpl implements ReleaseService {
 
         if (!Files.exists(dir)) {
             Files.createDirectories(dir);
-            log.info("Diretório criado: {}", dir.toAbsolutePath());
-        } else {
-            log.info("Diretório já existe: {}", dir.toAbsolutePath());
         }
 
         return dir;
@@ -106,7 +119,7 @@ public class ReleaseServiceImpl implements ReleaseService {
 
     private String processCoverFile(MultipartFile coverFile, Path dir) throws IOException {
         if (coverFile == null || coverFile.isEmpty()) {
-            throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "Capa não enviada.");
+            throw new GenericException(ErrorCodes.FILE_NOT_FOUND, "Capa não enviada.");
         }
 
         String coverExt = getExtension(coverFile.getOriginalFilename());
@@ -132,7 +145,7 @@ public class ReleaseServiceImpl implements ReleaseService {
         for (TrackRequestDTO trackDTO : trackDTOs) {
             MultipartFile audioFile = trackDTO.getFile();
             if (audioFile == null || audioFile.isEmpty()) {
-                throw new TrackException(ErrorCodes.FILE_NOT_FOUND, "Faixa não enviada.");
+                throw new GenericException(ErrorCodes.FILE_NOT_FOUND, "Faixa não enviada.");
             }
 
             String trackExt = getExtension(audioFile.getOriginalFilename());
@@ -202,7 +215,12 @@ public class ReleaseServiceImpl implements ReleaseService {
 
     private ArtistEntity findByIdOrThrowArtistDataNotFoundException(UUID id) {
         return artistRepository.findById(id)
-                .orElseThrow(() -> new TrackException(ErrorCodes.DATA_NOT_FOUND, "Artist not found with ID: " + id));
+                .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, "Artist not found with ID: " + id));
+    }
+
+    private LabelEntity findByIdOrThrowLabelDataNotFoundException(UUID id) {
+        return labelRepository.findById(id)
+                .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, "Label not found with ID: " + id));
     }
 }
 

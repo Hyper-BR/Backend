@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -21,5 +22,8 @@ public interface TrackRepository extends UuidRepository<TrackEntity> {
            " WHERE lower(t.title) like lower(concat('%', :q, '%'))" +
            " or lower(a.username) like lower(concat('%', :q, '%'))")
     Page<TrackEntity> searchByTitleOrArtist(@Param("q") String q, Pageable pageable);
+
+    @Query("SELECT t FROM TrackEntity t JOIN t.genres g WHERE g.name = :name")
+    List<TrackEntity> findByGenreName(@Param("name") String name);
 
 }

@@ -8,7 +8,7 @@ import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.SubscriptionEntity;
 import br.com.hyper.enums.UserRole;
-import br.com.hyper.exceptions.CustomerException;
+import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.repositories.SubscriptionRepository;
 import br.com.hyper.utils.JwtUtil;
@@ -57,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
             SubscriptionEntity subscription = subscriptionRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
 
             if (customerRepository.findByEmail(customer.getEmail()).isPresent()){
-                throw new CustomerException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
+                throw new GenericException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
             }
 
             customerEntity = modelMapper.map(customer, CustomerEntity.class);
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
 
             return modelMapper.map(customerEntity, CustomerResponseDTO.class);
         }  catch (DataIntegrityViolationException e) {
-            throw new CustomerException(ErrorCodes.DUPLICATED_DATA,
+            throw new GenericException(ErrorCodes.DUPLICATED_DATA,
                     ErrorCodes.DUPLICATED_DATA.getMessage());
         }
     }
@@ -104,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
     public CustomerResponseDTO me(@AuthenticationPrincipal CustomerEntity customer) {
 
         if (customer == null) {
-            throw new CustomerException(ErrorCodes.UNAUTHORIZED, "User not authenticated");
+            throw new GenericException(ErrorCodes.UNAUTHORIZED, "User not authenticated");
         }
 
         CustomerEntity customerEntity = findByEmailOrThrowUserDataNotFoundException(customer.getEmail());
@@ -158,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
 
     private CustomerEntity findByEmailOrThrowUserDataNotFoundException(String email) {
         return customerRepository.findByEmail(email).orElseThrow(
-                () -> new CustomerException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
+                () -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 
 }
