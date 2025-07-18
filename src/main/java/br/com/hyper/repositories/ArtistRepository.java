@@ -3,6 +3,7 @@ package br.com.hyper.repositories;
 import br.com.hyper.entities.ArtistEntity;
 
 import br.com.hyper.entities.CustomerEntity;
+import br.com.hyper.enums.Privacy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,8 @@ public interface ArtistRepository extends UuidRepository<ArtistEntity> {
     @Query("SELECT a FROM ArtistEntity a WHERE lower(a.username) like lower(concat('%', :q, '%'))")
     Page<ArtistEntity> searchByName(@Param("q") String q, Pageable pageable);
 
-    @Query(" SELECT CASE WHEN COUNT(t) <= 10 THEN true ELSE false END FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId AND t.privacy = 'PUBLIC'")
-    boolean hasPublicTrackLimit(@Param("artistId") UUID artistId);
+    @Query("SELECT COUNT(t) FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId AND t.privacy = :privacy")
+    int countPublicTracks(@Param("artistId") UUID artistId,
+                           @Param("privacy") Privacy privacy);
+
 }

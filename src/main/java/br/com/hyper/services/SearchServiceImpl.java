@@ -6,6 +6,7 @@ import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.ArtistEntity;
 import br.com.hyper.entities.TrackEntity;
+import br.com.hyper.enums.Privacy;
 import br.com.hyper.repositories.ArtistRepository;
 import br.com.hyper.repositories.TrackRepository;
 import br.com.hyper.utils.PaginationMapper;
@@ -34,7 +35,7 @@ public class SearchServiceImpl implements SearchService {
 
     public PageResponseDTO<TrackResponseDTO> searchTracks(String q, Pageable pageable) {
 
-        Page<TrackEntity> tracks = trackRepository.searchByTitleOrArtist(q, pageable);
+        Page<TrackEntity> tracks = trackRepository.searchByTitleOrArtist(q, Privacy.PUBLIC, pageable);
 
         return paginationMapper.map(tracks, TrackResponseDTO.class);
 

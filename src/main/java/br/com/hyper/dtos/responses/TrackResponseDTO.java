@@ -15,7 +15,9 @@ public class TrackResponseDTO {
 
     private UUID id;
     private String title;
-    private Double duration;
+    private int duration;
+    private String bpm;
+    private String key;
     private String genre;
     private String fileUrl;
     private BigDecimal price;

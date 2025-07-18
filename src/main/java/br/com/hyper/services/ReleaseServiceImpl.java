@@ -1,8 +1,10 @@
 package br.com.hyper.services;
 
+import br.com.hyper.constants.DefaultAssets;
 import br.com.hyper.dtos.requests.ReleaseRequestDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.entities.*;
+import br.com.hyper.enums.Privacy;
 import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
 import br.com.hyper.constants.ErrorCodes;
@@ -47,20 +49,18 @@ public class ReleaseServiceImpl implements ReleaseService {
     @Override
     public ReleaseResponseDTO save(ReleaseRequestDTO releaseDTO, CustomerEntity customer) {
 
-        UUID owner = null;
+        UUID owner;
+        ArtistEntity artist = null;
+        LabelEntity label = null;
         try {
             if(Boolean.TRUE.equals(customer.getIsLabel())){
-                LabelEntity label = findByIdOrThrowLabelDataNotFoundException(customer.getId());
+                label = findByIdOrThrowLabelDataNotFoundException(customer.getId());
                 owner = label.getId();
             } else if (Boolean.TRUE.equals(customer.getIsArtist())) {
-                ArtistEntity artist = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
+                artist = findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId());
                 owner = artist.getId();
             } else {
                 throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());
-            }
-
-            if(Boolean.TRUE.equals(customer.getIsArtist())) {
-                validateFreeLimitTrackToUpload(customer.getArtistProfile());
             }
 
             ReleaseEntity release = createRelease(releaseDTO, owner);
@@ -69,16 +69,35 @@ public class ReleaseServiceImpl implements ReleaseService {
 
             Path releaseDir = createReleaseDirectory(release.getUpc());
 
-            String coverRelativePath = processCoverFile(releaseDTO.getCover(), releaseDir);
-            release.setCoverUrl("/" + coverRelativePath);
+            if(releaseDTO.getCover() == null || releaseDTO.getCover().isEmpty() ) {
+                release.setCoverUrl(customer.getAvatarUrl());
+            } else {
+                String coverRelativePath = processCoverFile(releaseDTO.getCover(), releaseDir);
+                release.setCoverUrl("/" + coverRelativePath);
+            }
 
-            List<TrackEntity> savedTracks = processTracks(customer, releaseDTO.getTracks(), release, releaseDir);
+            List<TrackEntity> savedTracks;
+            if(Boolean.TRUE.equals(customer.getIsLabel())){
+                savedTracks = processArtistTracks(artist, releaseDTO.getTracks(), release, releaseDir); // TODO
+            } else if (Boolean.TRUE.equals(customer.getIsArtist())) {
+                savedTracks = processArtistTracks(artist, releaseDTO.getTracks(), release, releaseDir);
+            } else {
+                throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());
+            }
 
-            int totalDuration = savedTracks.stream().mapToInt(TrackEntity::getDuration).sum();
             release.setTracks(savedTracks);
-            release.setType(detectReleaseType(savedTracks.size(), totalDuration));
+            if(savedTracks.size() > 1) {
+                release.setType(releaseDTO.getType());
+            } else {
+                release.setType(ReleaseType.SINGLE);
+            }
 
             releaseRepository.save(release);
+
+            customer.getArtistProfile().setFreeTrackLimit(
+                    customer.getArtistProfile().getFreeTrackLimit() - savedTracks.size()
+            );
+
             return modelMapper.map(release, ReleaseResponseDTO.class);
 
         } catch (IOException | CannotReadException | TagException |
@@ -99,13 +118,6 @@ public class ReleaseServiceImpl implements ReleaseService {
         return release;
     }
 
-    private void validateFreeLimitTrackToUpload(ArtistEntity artistProfile) {
-        artistRepository.hasPublicTrackLimit(artistProfile.getId());
-        if (artistProfile.getFreeTrackLimit() <= 0) {
-            throw new GenericException(ErrorCodes.LIMIT_EXCEEDED, ErrorCodes.LIMIT_EXCEEDED.getMessage());
-        }
-    }
-
     private Path createReleaseDirectory(String upc) throws IOException {
         String basePath = System.getProperty("user.dir");
         Path dir = Paths.get(basePath, "uploads", "releases", upc);
@@ -118,34 +130,30 @@ public class ReleaseServiceImpl implements ReleaseService {
     }
 
     private String processCoverFile(MultipartFile coverFile, Path dir) throws IOException {
-        if (coverFile == null || coverFile.isEmpty()) {
-            throw new GenericException(ErrorCodes.FILE_NOT_FOUND, "Capa não enviada.");
-        }
-
         String coverExt = getExtension(coverFile.getOriginalFilename());
         String coverFileName = "cover." + coverExt;
         Path coverPath = dir.resolve(coverFileName);
 
         Files.createDirectories(dir);
-        log.info("Salvando capa em: {}", coverPath.toAbsolutePath());
         coverFile.transferTo(coverPath.toFile());
 
         Path relativePath = Paths.get("uploads", "releases", dir.getFileName().toString(), coverFileName);
         return relativePath.toString().replace("\\", "/");
     }
 
-
-
-    private List<TrackEntity> processTracks(CustomerEntity customer, List<TrackRequestDTO> trackDTOs, ReleaseEntity release, Path dir)
+    private List<TrackEntity> processArtistTracks(ArtistEntity artist, List<TrackRequestDTO> trackDTOs, ReleaseEntity release, Path dir)
             throws IOException, CannotReadException, TagException,
             InvalidAudioFrameException, ReadOnlyFileException {
 
         List<TrackEntity> savedTracks = new ArrayList<>();
 
+        int existingPublicTracks = artistRepository.countPublicTracks(artist.getId(), Privacy.PUBLIC);
+        int remainingPublicSlots = 5 - existingPublicTracks;
+
         for (TrackRequestDTO trackDTO : trackDTOs) {
             MultipartFile audioFile = trackDTO.getFile();
             if (audioFile == null || audioFile.isEmpty()) {
-                throw new GenericException(ErrorCodes.FILE_NOT_FOUND, "Faixa não enviada.");
+                throw new GenericException(ErrorCodes.FILE_NOT_FOUND, ErrorCodes.FILE_NOT_FOUND.getMessage());
             }
 
             String trackExt = getExtension(audioFile.getOriginalFilename());
@@ -157,28 +165,38 @@ public class ReleaseServiceImpl implements ReleaseService {
             int duration = audio.getAudioHeader().getTrackLength();
 
             TrackEntity track = new TrackEntity();
+            if(trackDTO.getTitle() == null || trackDTO.getTitle().isEmpty()) {
+                throw new GenericException(ErrorCodes.DATA_NOT_FOUND, "Track title is required.");
+            }
+
             track.setTitle(trackDTO.getTitle());
             track.setDuration(duration);
+
             track.setPrice(BigDecimal.valueOf(1.99));
             track.setRelease(release);
-            track.setIsrc("BR-KRVO-23-" + UUID.randomUUID().toString().substring(0, 6));
+            track.setIsrc("BR-KRVO-23-" + UUID.randomUUID().toString().substring(0, 6) + "TODO");
             track.setFileUrl(trackPath.toString());
             track.setPlays(BigInteger.ZERO);
-            track.setPrivacy(trackDTO.getPrivacy());
+            track.setBpm("180"); // TODO: Extract BPM from audio
+            track.setKey("7A"); // TODO: Extract key from audio
 
-            UUID ownerArtistId = customer.getArtistProfile().getId();
-            ArtistEntity ownerArtist = findByIdOrThrowArtistDataNotFoundException(ownerArtistId);
+            if (trackDTO.getPrivacy() == Privacy.PUBLIC && remainingPublicSlots > 0) {
+                track.setPrivacy(Privacy.PUBLIC);
+                remainingPublicSlots--;
+            } else {
+                track.setPrivacy(Privacy.PRIVATE);
+            }
 
             List<ArtistEntity> artists;
             if (trackDTO.getArtists() == null || trackDTO.getArtists().isEmpty()) {
-                artists = List.of(ownerArtist);
+                artists = List.of(artist);
             } else {
                 artists = trackDTO.getArtists().stream()
                         .map(artistDTO -> findByIdOrThrowArtistDataNotFoundException(artistDTO.getId()))
                         .collect(Collectors.toList());
 
-                if (artists.stream().noneMatch(a -> a.getId().equals(ownerArtistId))) {
-                    artists.add(ownerArtist);
+                if (artists.stream().noneMatch(a -> a.getId().equals(artist.getId()))) {
+                    artists.add(artist);
                 }
             }
 
@@ -189,22 +207,9 @@ public class ReleaseServiceImpl implements ReleaseService {
         return savedTracks;
     }
 
-
-
     private String getExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) return "mp3";
         return fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-    }
-
-
-    private ReleaseType detectReleaseType(int trackCount, int durationSeconds) {
-        if (trackCount >= 7 || durationSeconds > 1800) {
-            return ReleaseType.ALBUM;
-        } else if (trackCount >= 3) {
-            return ReleaseType.EP;
-        } else {
-            return ReleaseType.SINGLE;
-        }
     }
 
     private String sanitize(String input) {

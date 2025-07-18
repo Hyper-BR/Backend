@@ -76,7 +76,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Resource loadAudio(UUID id) {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
-        String filePath = track.getRelease().getCoverUrl();
+        String filePath = track.getFileUrl();
 
         try {
             Path path = Paths.get(filePath);
@@ -85,10 +85,10 @@ public class TrackServiceImpl implements TrackService {
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Arquivo não encontrado ou não legível");
+                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException("URL do arquivo malformada", e);
+            throw new GenericException(ErrorCodes.INVALID_DATA, e.getMessage());
         }
     }
 
@@ -101,7 +101,7 @@ public class TrackServiceImpl implements TrackService {
 
     private TrackEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
         return trackRepository.findById(id)
-                .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, "Track not found with id: " + id));
+                .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 
 }

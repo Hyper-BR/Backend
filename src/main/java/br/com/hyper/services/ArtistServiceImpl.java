@@ -9,8 +9,6 @@ import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.ArtistRepository;
 import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.utils.PaginationMapper;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,9 +26,6 @@ import java.util.UUID;
 public class ArtistServiceImpl implements ArtistService {
     private final CustomerRepository customerRepository;
 
-    @PersistenceContext
-    private final EntityManager entityManager;
-
     private final ArtistRepository artistRepository;
 
     private final ModelMapper modelMapper;
@@ -41,16 +36,17 @@ public class ArtistServiceImpl implements ArtistService {
     public ArtistResponseDTO becomeArtist(ArtistRequestDTO artistDTO, CustomerEntity customer) {
         try {
             if (artistRepository.existsByCustomer(customer)) {
-                throw new GenericException(ErrorCodes.DUPLICATED_DATA, "Este usuário já possui um perfil de artista.");
+                throw new GenericException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
             }
 
             if (Boolean.TRUE.equals(customer.getIsLabel()))  {
-                throw new GenericException(ErrorCodes.INVALID_DATA, "Usuário não pode ser artista e gravadora ao mesmo tempo.");
+                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
             }
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setUsername(artistDTO.getUsername().trim());
             artist.setIsVerified(false);
+            artist.setFreeTrackLimit(5);
 
             customer.setIsArtist(true);
             customer = customerRepository.save(customer);
@@ -84,7 +80,7 @@ public class ArtistServiceImpl implements ArtistService {
         ArtistEntity artistEntity = findByIdOrThrowArtistDataNotFoundException(id);
 
         if (artistDTO.getUsername() == null || artistDTO.getUsername().trim().isEmpty()) {
-            throw new GenericException(ErrorCodes.INVALID_DATA, "Nome artístico não pode ser vazio.");
+            throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
         }
 
         try {
@@ -94,7 +90,7 @@ public class ArtistServiceImpl implements ArtistService {
 
             return modelMapper.map(artistEntity, ArtistResponseDTO.class);
         } catch (DataIntegrityViolationException e) {
-            throw new GenericException(ErrorCodes.DUPLICATED_DATA, "Nome artístico já em uso.");
+            throw new GenericException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
         }
     }
 

@@ -27,10 +27,6 @@ public class LabelEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "CUSTOMER_ID", nullable = false, unique = true)
     private CustomerEntity customer;
 
-    @ManyToOne
-    @JoinColumn(name = "ARTIST_ID", nullable = false)
-    private ArtistEntity artist;
-
     @Column(name = "USERNAME", nullable = false)
     private String username;
 

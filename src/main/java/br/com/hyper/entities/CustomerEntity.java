@@ -44,6 +44,9 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @Column(name = "BIRTH_DATE", nullable = false)
     private String birthDate;
 
+    @Column(name = "COVER_URL")
+    private String coverUrl;
+
     @Column(name = "AVATAR_URL")
     private String avatarUrl = DefaultAssets.AVATAR_URL;
 
@@ -64,7 +67,7 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     private Boolean isLabel;
 
     @OneToOne(mappedBy = "customer")
-    @JoinColumn(name = "customer_id", nullable = false, unique = true)
+    @JoinColumn(name = "customer_id", unique = true)
     private ArtistEntity artistProfile;
 
     @OneToOne(mappedBy = "customer")

@@ -41,6 +41,12 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "DURATION", nullable = false)
     private Integer duration;
 
+    @Column(name = "BPM", nullable = false)
+    private String bpm;
+
+    @Column(name = "KEY", nullable = false)
+    private String key;
+
     @Column(name = "PRICE", nullable = false)
     private BigDecimal price;
 
@@ -50,6 +56,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "PLAYS", nullable = false)
     private BigInteger plays;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "PRIVACY", nullable = false)
     private Privacy privacy;
 
