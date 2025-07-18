@@ -7,8 +7,7 @@ import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.PlaylistEntity;
 import br.com.hyper.entities.TrackEntity;
-import br.com.hyper.exceptions.PlaylistNotFoundException;
-import br.com.hyper.exceptions.TrackException;
+import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.PlaylistRepository;
 import br.com.hyper.repositories.TrackRepository;
 import br.com.hyper.utils.PaginationMapper;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -43,8 +41,11 @@ public class PlaylistServiceImpl implements PlaylistService {
         PlaylistEntity playlistEntity;
         try{
             if (playlist.getName() == null || playlist.getName().isEmpty()) {
-                log.error("Playlist name cannot be null or empty");
-                throw new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, "Playlist name cannot be null or empty");
+                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
+            }
+
+            if (playlist.getName().length() > 50) {
+                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
             }
             
             playlistEntity = modelMapper.map(playlist, PlaylistEntity.class);
@@ -78,16 +79,14 @@ public class PlaylistServiceImpl implements PlaylistService {
         List<PlaylistEntity> playlists;
 
         if (id == null) {
-            log.error("Customer ID is null");
-            throw new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, "Customer ID cannot be null");
+            throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());
         }
 
         try {
             playlists = playlistRepository.findByCustomerId(id);
 
-        } catch (Exception e) {
-            log.error("Error finding playlists for customer with ID: {}", id, e);
-            throw new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, "Playlists not found for customer ID: " + id);
+        } catch (java.lang.Exception e) {
+            throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());
         }
 
         return playlists.stream()
@@ -99,13 +98,11 @@ public class PlaylistServiceImpl implements PlaylistService {
     public PlaylistResponseDTO update(UUID id, PlaylistRequestDTO playlist) {
 
         if (playlist == null || playlist.getName() == null || playlist.getName().isEmpty()) {
-            log.error("Playlist data is invalid");
-            throw new PlaylistNotFoundException(ErrorCodes.INVALID_DATA, "Playlist data cannot be null or empty");
+            throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
         }
 
         if (playlist.getName().length() > 50) {
-            log.error("Playlist name exceeds maximum length of 50 characters");
-            throw new PlaylistNotFoundException(ErrorCodes.INVALID_DATA, "Playlist name exceeds maximum length of 50 characters");
+            throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
         }
 
         PlaylistEntity playlistCurrent = findByIdOrThrowPlaylistDataNotFoundException(id);
@@ -132,17 +129,11 @@ public class PlaylistServiceImpl implements PlaylistService {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(trackId);
 
         if (playlist.getTracks().contains(track)) {
-            log.warn("Track with ID {} is already in the playlist with ID {}", trackId, id);
             return modelMapper.map(playlist, PlaylistResponseDTO.class);
         }
 
         playlist.getTracks().add(track);
-        try {
-            playlistRepository.save(playlist);
-        } catch (DataIntegrityViolationException e) {
-            log.error("Error adding track to playlist: {}", e.getMessage());
-            throw new DataIntegrityViolationException("Error adding track to playlist: " + e.getMessage());
-        }
+        playlistRepository.save(playlist);
 
         return modelMapper.map(playlist, PlaylistResponseDTO.class);
     }
@@ -153,27 +144,22 @@ public class PlaylistServiceImpl implements PlaylistService {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(trackId);
 
         if (!playlist.getTracks().contains(track)) {
-            log.warn("Track with ID {} is not in the playlist with ID {}", trackId, id);
             return modelMapper.map(playlist, PlaylistResponseDTO.class);
         }
 
         playlist.getTracks().remove(track);
-        try {
-            playlistRepository.save(playlist);
-        } catch (DataIntegrityViolationException e) {
-            log.error("Error removing track from playlist: {}", e.getMessage());
-            throw new DataIntegrityViolationException("Error removing track from playlist: " + e.getMessage());
-        }
+        playlistRepository.save(playlist);
 
         return modelMapper.map(playlist, PlaylistResponseDTO.class);
     }
 
     private PlaylistEntity findByIdOrThrowPlaylistDataNotFoundException(UUID id) {
         return playlistRepository.findById(id).orElseThrow(
-                () -> new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, "Playlist not found with ID: " + id));
+                () -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
+
     private TrackEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
         return trackRepository.findById(id).orElseThrow(
-                () -> new TrackException(ErrorCodes.DATA_NOT_FOUND, "Track not found with ID: " + id));
+                () -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 }

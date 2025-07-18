@@ -5,7 +5,7 @@ import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.TrackEntity;
-import br.com.hyper.exceptions.PlaylistNotFoundException;
+import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.TrackRepository;
 import br.com.hyper.utils.PaginationMapper;
 import org.springframework.core.io.Resource;
@@ -57,18 +57,17 @@ public class TrackServiceImpl implements TrackService {
 
         if (track == null || track.getTitle() == null || track.getTitle().isEmpty()) {
             log.error("Track data is invalid");
-            throw new PlaylistNotFoundException(ErrorCodes.INVALID_DATA, "Track data cannot be null or empty");
+            throw new GenericException(ErrorCodes.INVALID_DATA, "Track data cannot be null or empty");
         }
 
         if (track.getTitle().length() > 50) {
             log.error("Track name exceeds maximum length of 50 characters");
-            throw new PlaylistNotFoundException(ErrorCodes.INVALID_DATA, "Track name exceeds maximum length of 50 characters");
+            throw new GenericException(ErrorCodes.INVALID_DATA, "Track name exceeds maximum length of 50 characters");
         }
 
         TrackEntity trackCurrent = findByIdOrThrowTrackDataNotFoundException(id);
 
         trackCurrent.setTitle(track.getTitle());
-        trackCurrent.setGenre(track.getGenre());
 
         TrackEntity trackEntity = trackRepository.save(trackCurrent);
         return modelMapper.map(trackEntity, TrackResponseDTO.class);
@@ -77,7 +76,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Resource loadAudio(UUID id) {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
-        String filePath = track.getRelease().getCoverUrl();
+        String filePath = track.getFileUrl();
 
         try {
             Path path = Paths.get(filePath);
@@ -86,10 +85,10 @@ public class TrackServiceImpl implements TrackService {
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Arquivo não encontrado ou não legível");
+                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException("URL do arquivo malformada", e);
+            throw new GenericException(ErrorCodes.INVALID_DATA, e.getMessage());
         }
     }
 
@@ -102,7 +101,7 @@ public class TrackServiceImpl implements TrackService {
 
     private TrackEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
         return trackRepository.findById(id)
-                .orElseThrow(() -> new PlaylistNotFoundException(ErrorCodes.DATA_NOT_FOUND, "Track not found with id: " + id));
+                .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
 
 }

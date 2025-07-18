@@ -28,6 +28,10 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID id;
 
+    @ManyToOne
+    @JoinColumn(name = "RELEASE_ID", nullable = false)
+    private ReleaseEntity release;
+
     @Column(name = "TITLE", nullable = false)
     private String title;
 
@@ -35,16 +39,16 @@ public class TrackEntity extends BaseEntity implements Serializable {
     private String fileUrl;
 
     @Column(name = "DURATION", nullable = false)
-    private Integer durationInSeconds;
+    private Integer duration;
 
-    @Column(name = "GENRE", nullable = false)
-    private String genre;
+    @Column(name = "BPM", nullable = false)
+    private String bpm;
+
+    @Column(name = "KEY", nullable = false)
+    private String key;
 
     @Column(name = "PRICE", nullable = false)
     private BigDecimal price;
-
-    @Column(name = "TAGS", nullable = false)
-    private String tags;
 
     @Column(name = "ISRC", nullable = false)
     private String isrc;
@@ -52,9 +56,17 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "PLAYS", nullable = false)
     private BigInteger plays;
 
-    @ManyToOne
-    @JoinColumn(name = "RELEASE_ID", nullable = false)
-    private ReleaseEntity release;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PRIVACY", nullable = false)
+    private Privacy privacy;
+
+    @ManyToMany
+    @JoinTable(
+            name = "TRACK_GENRES",
+            joinColumns = @JoinColumn(name = "TRACK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GENRE_ID")
+    )
+    private List<GenreEntity> genres;
 
     @ManyToMany
     @JoinTable(
@@ -63,9 +75,6 @@ public class TrackEntity extends BaseEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "artist_id")
     )
     private List<ArtistEntity> artists;
-
-    @Column(name = "PRIVACY", nullable = false)
-    private Privacy privacy;
 
     @JsonProperty("coverUrl")
     public String getCover() {

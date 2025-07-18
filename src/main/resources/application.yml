@@ -18,8 +18,8 @@ spring:
     ignore-missing-migrations: false
   servlet:
     multipart:
-      max-file-size: 120MB
-      max-request-size: 120MB
+      max-file-size: 2048MB
+      max-request-size: 2048MB
 
 #  mail:
 #    host: smtp.gmail.com

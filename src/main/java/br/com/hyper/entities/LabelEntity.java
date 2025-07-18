@@ -1,6 +1,5 @@
 package br.com.hyper.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -14,8 +13,9 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ARTISTS")
-public class ArtistEntity extends BaseEntity implements Serializable {
+@Table(name = "LABELS")
+@Builder
+public class LabelEntity extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -27,18 +27,9 @@ public class ArtistEntity extends BaseEntity implements Serializable {
     @JoinColumn(name = "CUSTOMER_ID", nullable = false, unique = true)
     private CustomerEntity customer;
 
-    @Column(name = "USERNAME", nullable = false, unique = true)
+    @Column(name = "USERNAME", nullable = false)
     private String username;
 
-    @Column(name = "FREE_TRACK_LIMIT", nullable = false)
-    private Integer freeTrackLimit;
-
     @Column(name = "IS_VERIFIED", nullable = false)
-    private Boolean isVerified;
-
-    @JsonProperty("avatarUrl")
-    public String getAvatar() {
-        return customer.getAvatarUrl();
-    }
-
+    private boolean isVerified;
 }

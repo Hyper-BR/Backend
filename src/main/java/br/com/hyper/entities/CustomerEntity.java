@@ -29,9 +29,6 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "AVATAR_URL")
-    private String avatarUrl = DefaultAssets.AVATAR_URL;
-
     @Column(name = "NAME", nullable = false)
     private String name;
 
@@ -47,25 +44,35 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @Column(name = "BIRTH_DATE", nullable = false)
     private String birthDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUBSCRIPTION_ID", nullable = false)
-    private SubscriptionEntity subscription;
+    @Column(name = "COVER_URL")
+    private String coverUrl;
+
+    @Column(name = "AVATAR_URL")
+    private String avatarUrl = DefaultAssets.AVATAR_URL;
+
+    @Column(name = "BIOGRAPHY")
+    private String biography;
 
     @JoinColumn(name = "ROLE", nullable = false)
     private UserRole role;
 
-    @OneToOne(mappedBy = "customer")
-    @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private ArtistEntity artistProfile;
-
-    @Column(name = "BIOGRAPHY")
-    private String biography;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUBSCRIPTION_ID", nullable = false)
+    private SubscriptionEntity subscription;
 
     @Column(name = "IS_ARTIST", nullable = false)
     private Boolean isArtist;
 
     @Column(name = "IS_LABEL", nullable = false)
     private Boolean isLabel;
+
+    @OneToOne(mappedBy = "customer")
+    @JoinColumn(name = "customer_id", unique = true)
+    private ArtistEntity artistProfile;
+
+    @OneToOne(mappedBy = "customer")
+    @JoinColumn(name = "customer_id", nullable = false, unique = true)
+    private LabelEntity labelProfile;
 
     @OneToMany(mappedBy = "customer")
     private List<PlaylistEntity> playlists;
@@ -76,6 +83,8 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_CUSTOMER"), new SimpleGrantedAuthority("ROLE_ARTIST"));
         } else if(this.role == UserRole.ARTIST) {
             return List.of(new SimpleGrantedAuthority("ROLE_ARTIST"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+        } else if(this.role == UserRole.LABEL) {
+            return List.of(new SimpleGrantedAuthority("ROLE_LABEL"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
         }
         return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
     }

@@ -2,14 +2,11 @@ package br.com.hyper.controllers;
 
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
-import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.ArtistResponseDTO;
-import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.ArtistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
