@@ -15,11 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.UUID;
 
 @Slf4j
@@ -57,29 +54,39 @@ public class CustomerServiceImpl implements CustomerService {
             throw new GenericException(ErrorCodes.UNAUTHORIZED, ErrorCodes.UNAUTHORIZED.getMessage());
         }
 
-        CustomerEntity userCurrent = findByIdOrThrowUserDataNotFoundException(id);
+        if(dto.getName() != null && !dto.getName().isEmpty()) {
+            customer.setName(dto.getName());
+        }
 
-        userCurrent.setName(dto.getName());
-        userCurrent.setBirthDate(dto.getBirthDate());
-        userCurrent.setCountry(dto.getCountry());
+        if(dto.getBirthDate() != null && !dto.getBirthDate().isEmpty()) {
+            customer.setBirthDate(dto.getBirthDate());
+        }
+
+        if(dto.getCountry() != null && !dto.getCountry().isEmpty()) {
+            customer.setCountry(dto.getCountry());
+        }
+
+        if(dto.getBiography() != null && !dto.getBiography().isEmpty()) {
+            customer.setBiography(dto.getBiography());
+        }
 
         if (dto.getAvatar() != null && !dto.getAvatar().isEmpty()) {
-            String avatarUrl = LocalFileStorageUtil.saveFile(dto.getAvatar(), customer.getId().toString(),null, "avatar");
-            userCurrent.setAvatarUrl(avatarUrl);
+            String avatarUrl = LocalFileStorageUtil.saveFile(dto.getAvatar(), customer.getId().toString(),"", "avatar");
+            customer.setAvatarUrl(avatarUrl);
         } else {
-            userCurrent.setAvatarUrl(BaseUrls.AVATAR_URL);
+            customer.setAvatarUrl(BaseUrls.AVATAR_URL);
         }
 
         if (dto.getCover() != null && !dto.getCover().isEmpty()) {
-            String coverUrl = LocalFileStorageUtil.saveFile(dto.getAvatar(), customer.getId().toString(),null, "cover");
-            userCurrent.setCoverUrl(coverUrl);
+            String coverUrl = LocalFileStorageUtil.saveFile(dto.getCover(), customer.getId().toString(),"", "cover");
+            customer.setCoverUrl(coverUrl);
         } else {
-            userCurrent.setCoverUrl(null);
+            customer.setCoverUrl(null);
         }
 
-        customerRepository.save(userCurrent);
+        customer = customerRepository.save(customer);
 
-        return modelMapper.map(userCurrent, CustomerResponseDTO.class);
+        return modelMapper.map(customer, CustomerResponseDTO.class);
     }
 
 

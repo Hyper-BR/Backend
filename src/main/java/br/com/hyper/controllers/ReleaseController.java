@@ -18,7 +18,7 @@ public class ReleaseController {
 
     private final ReleaseService releaseService;
 
-    @PostMapping(value = "/release", consumes = { "multipart/form-data" })
+    @PostMapping(value = "/release", consumes = { "multipart/form-data", "application/json" })
     public ResponseEntity<ReleaseResponseDTO> create(
             @ModelAttribute(value = "release") ReleaseRequestDTO release,
             @AuthenticationPrincipal CustomerEntity customer) {

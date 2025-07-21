@@ -48,7 +48,7 @@ public class ReleaseServiceImpl implements ReleaseService {
         String upc = generateUpc();
         ReleaseEntity release = createRelease(releaseDTO, owner, upc);
 
-        Path path = Paths.get( "releases", upc);
+        Path path = Paths.get("releases", upc);
 
         String coverUrl = (releaseDTO.getCover() == null || releaseDTO.getCover().isEmpty())
                 ? customer.getAvatarUrl()

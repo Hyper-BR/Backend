@@ -10,6 +10,8 @@ public class CustomerRequestDTO {
 
     private String password;
 
+    private String biography;
+
     private String email;
 
     private String birthDate;

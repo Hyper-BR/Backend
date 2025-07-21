@@ -18,13 +18,13 @@ import java.util.UUID;
 public class LabelEntity extends BaseEntity implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "uuid")
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID id;
 
     @OneToOne
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false, unique = true)
+    @MapsId
+    @JoinColumn(name = "ID")
     private CustomerEntity customer;
 
     @Column(name = "USERNAME", nullable = false)

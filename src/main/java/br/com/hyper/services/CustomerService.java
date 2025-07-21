@@ -6,7 +6,6 @@ import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public interface CustomerService {

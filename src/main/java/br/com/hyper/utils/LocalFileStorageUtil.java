@@ -15,9 +15,9 @@ public class LocalFileStorageUtil {
 
     private static final Path ROOT_STORAGE = Path.of(System.getProperty("user.dir"), BaseUrls.BASE_URL);
 
-    public static String saveFile(MultipartFile file, String customerId, String path, String fileNameOverride) {
+    public static String saveFile(MultipartFile file, String owner, String path, String fileNameOverride) {
         try {
-            Path storageBase = ROOT_STORAGE.resolve(customerId).resolve(path);
+            Path storageBase = ROOT_STORAGE.resolve(owner).resolve(path);
 
             if (!Files.exists(storageBase)) {
                 Files.createDirectories(storageBase);
@@ -30,7 +30,7 @@ public class LocalFileStorageUtil {
             Path fullPath = storageBase.resolve(fileName);
             file.transferTo(fullPath.toFile());
 
-            Path publicPath = Path.of(BaseUrls.BASE_URL, customerId, path, fileName);
+            Path publicPath = Path.of(BaseUrls.BASE_URL, owner, path, fileName);
             return "/" + publicPath.toString().replace("\\", "/");
 
         } catch (IOException e) {

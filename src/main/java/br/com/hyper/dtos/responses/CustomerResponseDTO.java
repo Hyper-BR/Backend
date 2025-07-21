@@ -17,8 +17,10 @@ public class CustomerResponseDTO {
     private String email;
     private String birthDate;
     private SubscriptionDTO subscription;
+    private String biography;
     private String country;
     private String avatarUrl;
+    private String coverUrl;
     private ArtistResponseDTO artistProfile;
     private boolean isArtist;
     private boolean isLabel;

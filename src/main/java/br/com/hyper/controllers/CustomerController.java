@@ -43,9 +43,9 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping(value = "/customer/{id}")
+    @PutMapping(value = "/customer/{id}", consumes = { "multipart/form-data", "application/json" })
     public ResponseEntity<CustomerResponseDTO> update(@PathVariable UUID id,
-                                                      @RequestBody CustomerRequestDTO user,
+                                                      @ModelAttribute CustomerRequestDTO user,
                                                       @AuthenticationPrincipal CustomerEntity customer) {
 
         CustomerResponseDTO response = customerService.update(id, user, customer);
