@@ -1,6 +1,6 @@
 package br.com.hyper.services;
 
-import br.com.hyper.constants.DefaultAssets;
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.requests.AuthRequestDTO;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
             customerEntity.setIsArtist(false);
             customerEntity.setIsLabel(false);
             customerEntity.setPlaylists(new ArrayList<>());
-            customerEntity.setAvatarUrl(DefaultAssets.AVATAR_URL);
+            customerEntity.setAvatarUrl(BaseUrls.AVATAR_URL);
             customerEntity = customerRepository.save(customerEntity);
 
             Cookie accessCookie = tokenService.generateAccessTokenCookie(customerEntity);

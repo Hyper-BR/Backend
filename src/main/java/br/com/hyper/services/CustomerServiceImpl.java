@@ -1,5 +1,6 @@
 package br.com.hyper.services;
 
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
@@ -7,6 +8,7 @@ import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
+import br.com.hyper.utils.LocalFileStorageUtil;
 import br.com.hyper.utils.PaginationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.UUID;
 
 @Slf4j
@@ -47,22 +51,37 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponseDTO update(UUID id, CustomerRequestDTO user) {
+    public CustomerResponseDTO update(UUID id, CustomerRequestDTO dto, CustomerEntity customer){
+
+        if (!customer.getId().equals(id)) {
+            throw new GenericException(ErrorCodes.UNAUTHORIZED, ErrorCodes.UNAUTHORIZED.getMessage());
+        }
+
         CustomerEntity userCurrent = findByIdOrThrowUserDataNotFoundException(id);
 
-        userCurrent.setName(user.getName());
-        userCurrent.setAvatarUrl(user.getAvatarUrl());
-        userCurrent.setBirthDate(user.getBirthDate());
-        userCurrent.setCountry(user.getCountry());
+        userCurrent.setName(dto.getName());
+        userCurrent.setBirthDate(dto.getBirthDate());
+        userCurrent.setCountry(dto.getCountry());
 
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            userCurrent.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        if (dto.getAvatar() != null && !dto.getAvatar().isEmpty()) {
+            String avatarUrl = LocalFileStorageUtil.saveFile(dto.getAvatar(), customer.getId().toString(),null, "avatar");
+            userCurrent.setAvatarUrl(avatarUrl);
+        } else {
+            userCurrent.setAvatarUrl(BaseUrls.AVATAR_URL);
+        }
+
+        if (dto.getCover() != null && !dto.getCover().isEmpty()) {
+            String coverUrl = LocalFileStorageUtil.saveFile(dto.getAvatar(), customer.getId().toString(),null, "cover");
+            userCurrent.setCoverUrl(coverUrl);
+        } else {
+            userCurrent.setCoverUrl(null);
         }
 
         customerRepository.save(userCurrent);
 
         return modelMapper.map(userCurrent, CustomerResponseDTO.class);
     }
+
 
     @Override
     public void delete(UUID id) {

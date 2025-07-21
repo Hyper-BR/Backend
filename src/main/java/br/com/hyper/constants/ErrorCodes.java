@@ -9,6 +9,7 @@ public enum ErrorCodes {
 	FILE_READ_ERROR("FILE_READ_ERROR", "File read error"),
 	DUPLICATED_DATA("DUPLICATED_DATA", "Trying to save data that already exists"),
 	INVALID_DATA("INVALID_DATA", "Invalid data"),
+	FILE_STORAGE_ERROR("FILE_STORAGE_ERROR", "File storage error"),
 	UNAUTHORIZED("UNAUTHORIZED", "Unauthorized access"),
 	FILE_NOT_FOUND("FILE_NOT_FOUND", "File not found"),
 	LIMIT_EXCEEDED("LIMIT_EXCEEDED", "Limit exceeded"),

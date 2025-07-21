@@ -1,6 +1,6 @@
 package br.com.hyper.entities;
 
-import br.com.hyper.constants.DefaultAssets;
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
 import jakarta.persistence.*;
@@ -39,7 +39,7 @@ public class ReleaseEntity extends BaseEntity implements Serializable {
     private ReleaseType type;
 
     @Column(name = "COVER_URL", nullable = false)
-    private String coverUrl = DefaultAssets.COVER_URL;
+    private String coverUrl;
 
     @Column(name = "UPC", nullable = false)
     private String upc;

@@ -39,6 +39,6 @@ build/
 ### Logs ###
 *.log
 
-uploads/releases/*
-/src/main/java/variables/*
+/storage
+/src/main/java/variables
 .Ds_Store

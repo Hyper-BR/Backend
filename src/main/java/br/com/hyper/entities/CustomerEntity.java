@@ -1,6 +1,6 @@
 package br.com.hyper.entities;
 
-import br.com.hyper.constants.DefaultAssets;
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,7 +48,7 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     private String coverUrl;
 
     @Column(name = "AVATAR_URL")
-    private String avatarUrl = DefaultAssets.AVATAR_URL;
+    private String avatarUrl = BaseUrls.AVATAR_URL;
 
     @Column(name = "BIOGRAPHY")
     private String biography;

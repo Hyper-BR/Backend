@@ -3,6 +3,7 @@ package br.com.hyper.controllers;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
+import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -42,9 +44,11 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/customer/{id}")
-    public ResponseEntity<CustomerResponseDTO> update(@PathVariable UUID id, @RequestBody CustomerRequestDTO user) {
+    public ResponseEntity<CustomerResponseDTO> update(@PathVariable UUID id,
+                                                      @RequestBody CustomerRequestDTO user,
+                                                      @AuthenticationPrincipal CustomerEntity customer) {
 
-        CustomerResponseDTO response = customerService.update(id, user);
+        CustomerResponseDTO response = customerService.update(id, user, customer);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

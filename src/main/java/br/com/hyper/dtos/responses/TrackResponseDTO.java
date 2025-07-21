@@ -23,4 +23,5 @@ public class TrackResponseDTO {
     private BigDecimal price;
     private String coverUrl;
     private List<ArtistResponseDTO> artists;
+    private String createdDate;
 }
