@@ -1,5 +1,6 @@
 package br.com.hyper.services;
 
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
@@ -7,6 +8,7 @@ import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.TrackEntity;
 import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.TrackRepository;
+import br.com.hyper.utils.LocalFileStorageUtil;
 import br.com.hyper.utils.PaginationMapper;
 import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 @Slf4j
@@ -76,28 +79,34 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Resource loadAudio(UUID id) {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
-        String filePath = track.getFileUrl();
 
         try {
-            Path path = Paths.get(filePath);
-            Resource resource = new UrlResource(path.toUri());
-
-            if (resource.exists() && resource.isReadable()) {
-                return resource;
-            } else {
-                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
-            }
-        } catch (MalformedURLException e) {
+            return new UrlResource(LocalFileStorageUtil.searchFile(track.getFileUrl()).getURL());
+        } catch (IOException e) {
             throw new GenericException(ErrorCodes.INVALID_DATA, e.getMessage());
         }
     }
+
 
     @Override
     public void delete(UUID id) {
         TrackEntity track = findByIdOrThrowTrackDataNotFoundException(id);
 
         trackRepository.delete(track);
+
+        try {
+            String filePath = track.getFileUrl();
+            Path path = Path.of(filePath);
+
+            if (Files.exists(path)) {
+                Files.delete(path);
+            }
+        } catch (IOException e) {
+            log.warn("Erro ao remover arquivo físico do track {}: {}", id, e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
+
 
     private TrackEntity findByIdOrThrowTrackDataNotFoundException(UUID id) {
         return trackRepository.findById(id)

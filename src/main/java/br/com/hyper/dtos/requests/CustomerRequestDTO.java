@@ -7,18 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class CustomerRequestDTO {
 
     private String name;
-
     private String password;
-
     private String biography;
-
     private String email;
-
     private String birthDate;
-
     private String country;
-
     private MultipartFile avatar;
-
     private MultipartFile cover;
+    private boolean removeAvatar;
+    private boolean removeCover;
 }

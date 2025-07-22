@@ -70,18 +70,18 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setBiography(dto.getBiography());
         }
 
-        if (dto.getAvatar() != null && !dto.getAvatar().isEmpty()) {
+        if(dto.isRemoveAvatar()) {
+            customer.setAvatarUrl(BaseUrls.AVATAR_URL);
+        } else if(dto.getAvatar() != null && !dto.getAvatar().isEmpty()) {
             String avatarUrl = LocalFileStorageUtil.saveFile(dto.getAvatar(), customer.getId().toString(),"", "avatar");
             customer.setAvatarUrl(avatarUrl);
-        } else {
-            customer.setAvatarUrl(BaseUrls.AVATAR_URL);
         }
 
-        if (dto.getCover() != null && !dto.getCover().isEmpty()) {
+        if (dto.isRemoveCover()) {
+            customer.setCoverUrl(null);
+        } else if(dto.getCover() != null && !dto.getCover().isEmpty()) {
             String coverUrl = LocalFileStorageUtil.saveFile(dto.getCover(), customer.getId().toString(),"", "cover");
             customer.setCoverUrl(coverUrl);
-        } else {
-            customer.setCoverUrl(null);
         }
 
         customer = customerRepository.save(customer);
