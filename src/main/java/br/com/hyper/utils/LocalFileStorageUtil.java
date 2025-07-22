@@ -20,7 +20,7 @@ public class LocalFileStorageUtil {
 
     public static String saveFile(MultipartFile file, String owner, String path, String fileNameOverride) {
         try {
-            Path storageBase = Path.of(BaseUrls.BASE_URL, owner, path);
+            Path storageBase = Path.of(BaseUrls.BASE_URL, BaseUrls.STORAGE, owner, path);
 
             if (!Files.exists(storageBase)) {
                 Files.createDirectories(storageBase);

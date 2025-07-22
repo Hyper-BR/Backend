@@ -21,6 +21,8 @@ public class CustomerResponseDTO {
     private String country;
     private String avatarUrl;
     private String coverUrl;
+    private String followers;
+    private String following;
     private ArtistResponseDTO artistProfile;
     private boolean isArtist;
     private boolean isLabel;

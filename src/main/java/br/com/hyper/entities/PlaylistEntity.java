@@ -30,6 +30,9 @@ public class PlaylistEntity extends BaseEntity implements Serializable {
     @Column(name = "NAME", nullable = false)
     private String name;
 
+    @Column(name = "COVER_URL", nullable = false)
+    private String coverUrl;
+
     @Column(name = "DESCRIPTION")
     private String description;
 

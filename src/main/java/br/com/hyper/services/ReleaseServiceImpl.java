@@ -1,5 +1,6 @@
 package br.com.hyper.services;
 
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.requests.ReleaseRequestDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
@@ -103,7 +104,7 @@ public class ReleaseServiceImpl implements ReleaseService {
             ReleaseEntity release
     ) {
         List<TrackEntity> savedTracks = new ArrayList<>();
-        int remainingPublicSlots = 5 - artistRepository.countPublicTracks(artist.getId(), Privacy.PUBLIC);
+        int remainingPublicSlots = 5 - artistRepository.countTracksByPrivacy(artist.getId(), Privacy.PUBLIC);
         String upc = release.getUpc();
 
         for (TrackRequestDTO trackDTO : trackDTOs) {
@@ -122,7 +123,7 @@ public class ReleaseServiceImpl implements ReleaseService {
                 String sanitizedTitle = sanitize(trackDTO.getTitle());
                 String fileUrl = LocalFileStorageUtil.saveFile(audioFile, customerId, "releases/" + upc, sanitizedTitle);
 
-                Path storagePath = Paths.get(System.getProperty("user.dir"), fileUrl.replaceFirst("/", ""));
+                Path storagePath = Paths.get(BaseUrls.BASE_URL, fileUrl.replaceFirst("/", ""));
                 AudioFile audio = AudioFileIO.read(storagePath.toFile());
 
                 int duration = audio.getAudioHeader().getTrackLength();

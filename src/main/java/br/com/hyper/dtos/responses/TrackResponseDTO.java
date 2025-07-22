@@ -21,6 +21,7 @@ public class TrackResponseDTO {
     private String genre;
     private String fileUrl;
     private BigDecimal price;
+    private String privacy;
     private String coverUrl;
     private List<ArtistResponseDTO> artists;
     private String createdDate;

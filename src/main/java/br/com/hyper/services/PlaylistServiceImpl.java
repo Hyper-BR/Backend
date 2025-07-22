@@ -1,5 +1,6 @@
 package br.com.hyper.services;
 
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.constants.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
@@ -41,15 +42,16 @@ public class PlaylistServiceImpl implements PlaylistService {
         PlaylistEntity playlistEntity;
         try{
             if (playlist.getName() == null || playlist.getName().isEmpty()) {
-                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
+                throw new GenericException(ErrorCodes.INVALID_DATA, "Playlist name cannot be null or empty.");
             }
 
-            if (playlist.getName().length() > 50) {
-                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
+            if (playlist.getName().length() > 30) {
+                throw new GenericException(ErrorCodes.INVALID_DATA, "Playlist name is too long. Maximum length is 30 characters.");
             }
             
             playlistEntity = modelMapper.map(playlist, PlaylistEntity.class);
             playlistEntity.setCustomer(customer);
+            playlistEntity.setCoverUrl(BaseUrls.PLAYLIST_URL);
             playlistEntity = playlistRepository.save(playlistEntity);
 
             return modelMapper.map(playlistEntity, PlaylistResponseDTO.class);

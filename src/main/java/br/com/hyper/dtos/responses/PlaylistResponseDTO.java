@@ -11,6 +11,7 @@ import java.util.UUID;
 public class PlaylistResponseDTO {
     private UUID id;
     private String name;
+    private String coverUrl;
     private String description;
     private List<TrackResponseDTO> tracks;
 }

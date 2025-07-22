@@ -22,7 +22,7 @@ public interface ArtistRepository extends UuidRepository<ArtistEntity> {
     Page<ArtistEntity> searchByName(@Param("q") String q, Pageable pageable);
 
     @Query("SELECT COUNT(t) FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId AND t.privacy = :privacy")
-    int countPublicTracks(@Param("artistId") UUID artistId,
-                           @Param("privacy") Privacy privacy);
+    int countTracksByPrivacy(@Param("artistId") UUID artistId,
+                             @Param("privacy") Privacy privacy);
 
 }
