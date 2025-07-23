@@ -70,7 +70,7 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping(value = "/playlists/{playlistId}/tracks/{trackId}")
+    @PostMapping(value = "/playlist/{playlistId}/track/{trackId}")
     public ResponseEntity<PlaylistResponseDTO> addTrack(@PathVariable UUID playlistId,
                                                         @PathVariable UUID trackId) {
 
@@ -79,7 +79,7 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping(value = "/playlists/{playlistId}/tracks/{trackId}")
+    @DeleteMapping(value = "/playlist/{playlistId}/track/{trackId}")
     public ResponseEntity<PlaylistResponseDTO> removeTrack(@PathVariable UUID playlistId,
                                                            @PathVariable UUID trackId) {
 
