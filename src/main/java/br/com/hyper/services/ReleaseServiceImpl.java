@@ -11,7 +11,6 @@ import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
 import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.ArtistRepository;
-import br.com.hyper.repositories.LabelRepository;
 import br.com.hyper.repositories.ReleaseRepository;
 import br.com.hyper.utils.LocalFileStorageUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class ReleaseServiceImpl implements ReleaseService {
 
     private final ReleaseRepository releaseRepository;
     private final ArtistRepository artistRepository;
-    private final LabelRepository labelRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -70,9 +68,6 @@ public class ReleaseServiceImpl implements ReleaseService {
     }
 
     private UUID resolveOwner(CustomerEntity customer) {
-        if (Boolean.TRUE.equals(customer.getIsLabel())) {
-            return findByIdOrThrowLabelDataNotFoundException(customer.getId()).getId();
-        }
         if (Boolean.TRUE.equals(customer.getIsArtist())) {
             return findByIdOrThrowArtistDataNotFoundException(customer.getArtistProfile().getId()).getId();
         }
@@ -191,10 +186,5 @@ public class ReleaseServiceImpl implements ReleaseService {
     private ArtistEntity findByIdOrThrowArtistDataNotFoundException(UUID id) {
         return artistRepository.findById(id)
                 .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, "Artist not found with ID: " + id));
-    }
-
-    private LabelEntity findByIdOrThrowLabelDataNotFoundException(UUID id) {
-        return labelRepository.findById(id)
-                .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, "Label not found with ID: " + id));
     }
 }

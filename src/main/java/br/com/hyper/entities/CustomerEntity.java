@@ -70,9 +70,6 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     @OneToOne(mappedBy = "customer")
     private ArtistEntity artistProfile;
 
-    @OneToOne(mappedBy = "customer")
-    private LabelEntity labelProfile;
-
     @OneToMany(mappedBy = "customer")
     private List<PlaylistEntity> playlists;
 
@@ -86,10 +83,6 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
             );
             case ARTIST -> List.of(
                     new SimpleGrantedAuthority("ROLE_ARTIST"),
-                    new SimpleGrantedAuthority("ROLE_CUSTOMER")
-            );
-            case LABEL -> List.of(
-                    new SimpleGrantedAuthority("ROLE_LABEL"),
                     new SimpleGrantedAuthority("ROLE_CUSTOMER")
             );
             default -> List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
