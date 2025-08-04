@@ -81,8 +81,8 @@ public class TrackEntity extends BaseEntity implements Serializable {
         return release.getCoverUrl();
     }
 
-    @JsonProperty("playCount")
-    public long getPlayCount() {
+    @JsonProperty("plays")
+    public long getPlays() {
         return plays != null ? plays.longValue() : 0;
     }
 }

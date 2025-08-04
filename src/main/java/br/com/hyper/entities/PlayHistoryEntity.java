@@ -21,7 +21,7 @@ public class PlayHistoryEntity extends BaseEntity {
     private TrackEntity track;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CUSTOMER_IR")
+    @JoinColumn(name = "CUSTOMER_ID")
     private CustomerEntity customer;
 
     @Column(name = "ANONYMOUS_SESSION_ID")

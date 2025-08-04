@@ -27,7 +27,7 @@ public class TrackPurchaseEntity extends BaseEntity {
     private TrackEntity track;
 
     @Column(name = "AMOUNT", nullable = false)
-    private BigDecimal amount;
+    private BigDecimal price;
 
     @Column(name = "PAYMENT_ID", nullable = false, unique = true)
     private String paymentId;

@@ -1,10 +1,9 @@
 package br.com.hyper.dtos;
 
-import br.com.hyper.dtos.responses.CustomerResponseDTO;
+import br.com.hyper.dtos.responses.TrackResponseDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 @Data
@@ -13,12 +12,12 @@ import java.util.List;
 @Builder
 public class InsightsDTO {
 
-    private BigInteger totalPlays;
-    private BigInteger totalPurchases;
-    private BigInteger totalDownloads;
+    private Long totalPlays;
+    private Long totalPurchases;
+    private Long totalDownloads;
     private BigDecimal totalRevenue;
-    private BigInteger totalTracks;
-    private BigInteger totalAlbums;
-    private List<TrackInsightsDTO> tracks;
-    private List<CustomerResponseDTO> topListeners;
+    private Integer totalTracks;
+    private Long totalAlbums;
+    private List<TrackResponseDTO> tracks;
+    private List<ListenerDTO> topListeners;
 }
