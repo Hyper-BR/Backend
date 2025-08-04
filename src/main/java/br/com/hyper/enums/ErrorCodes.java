@@ -1,4 +1,4 @@
-package br.com.hyper.constants;
+package br.com.hyper.enums;
 
 import lombok.Getter;
 

@@ -10,11 +10,15 @@ import java.util.List;
 @Data
 @Setter
 @Getter
+@Builder
 public class InsightsDTO {
 
     private BigInteger totalPlays;
+    private BigInteger totalPurchases;
+    private BigInteger totalDownloads;
     private BigDecimal totalRevenue;
-    private long totalTracks;
-    private long totalAlbums;
+    private BigInteger totalTracks;
+    private BigInteger totalAlbums;
+    private List<TrackInsightsDTO> tracks;
     private List<CustomerResponseDTO> topListeners;
 }

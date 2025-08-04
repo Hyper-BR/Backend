@@ -1,7 +1,7 @@
 package br.com.hyper.services;
 
 import br.com.hyper.constants.BaseUrls;
-import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.enums.ErrorCodes;
 import br.com.hyper.dtos.requests.AuthRequestDTO;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;

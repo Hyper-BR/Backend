@@ -1,7 +1,7 @@
 package br.com.hyper.utils;
 
 import br.com.hyper.constants.BaseUrls;
-import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.enums.ErrorCodes;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.core.io.Resource;

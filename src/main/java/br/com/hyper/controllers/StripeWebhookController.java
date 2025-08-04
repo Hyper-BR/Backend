@@ -42,7 +42,6 @@ public class StripeWebhookController {
             String userId = session.getMetadata().get("userId");
             String planId = session.getMetadata().get("planId");
 
-            // ✅ Aqui você ativa o plano no banco
             subscriptionService.activateSubscription(UUID.fromString(userId), Long.parseLong(planId));
         }
 

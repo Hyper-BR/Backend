@@ -1,7 +1,6 @@
 package br.com.hyper.services;
 
-import br.com.hyper.constants.BaseUrls;
-import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.enums.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;

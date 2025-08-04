@@ -1,6 +1,6 @@
 package br.com.hyper.exceptions;
 
-import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.enums.ErrorCodes;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

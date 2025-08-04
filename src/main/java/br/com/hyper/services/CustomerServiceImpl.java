@@ -2,7 +2,7 @@ package br.com.hyper.services;
 
 import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.dtos.PageResponseDTO;
-import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.enums.ErrorCodes;
 import br.com.hyper.dtos.responses.CustomerResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.exceptions.GenericException;
