@@ -1,5 +1,6 @@
 package br.com.hyper.entities;
 
+import br.com.hyper.enums.Privacy;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -51,4 +52,8 @@ public class PlaylistEntity extends BaseEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "TRACK_ID")
     )
     private List<TrackEntity> tracks;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PRIVACY", nullable = false)
+    private Privacy privacy;
 }

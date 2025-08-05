@@ -14,6 +14,15 @@ import java.util.UUID;
 @Repository
 public interface TrackRepository extends UuidRepository<TrackEntity> {
 
+    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE t.privacy = :privacy")
+    Page<TrackEntity> findAllTracksByPrivacy(@Param("privacy") Privacy privacy,
+                                             Pageable pageable);
+
+    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId AND t.privacy = :privacy")
+    Page<TrackEntity> findByArtistIdAndPrivacy(@Param("artistId") UUID artistId,
+                                               @Param("privacy") Privacy privacy,
+                                               Pageable pageable);
+
     @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId")
     Page<TrackEntity> findByArtistId(@Param("artistId") UUID artistId, Pageable pageable);
 

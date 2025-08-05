@@ -1,8 +1,7 @@
 package br.com.hyper.repositories;
 
 import br.com.hyper.entities.PlaylistEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import br.com.hyper.enums.Privacy;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,4 +15,6 @@ public interface PlaylistRepository extends UuidRepository<PlaylistEntity> {
     @Query("SELECT o FROM PlaylistEntity o WHERE o.customer.id = :customerId")
     List<PlaylistEntity> findByCustomerId(@Param("customerId") UUID customerId);
 
+    @Query("SELECT o FROM PlaylistEntity o WHERE o.customer.id = :artistId AND o.privacy = :privacy")
+    List<PlaylistEntity> findByArtistId(@Param("artistId") UUID artistId, @Param("privacy") Privacy privacy);
 }

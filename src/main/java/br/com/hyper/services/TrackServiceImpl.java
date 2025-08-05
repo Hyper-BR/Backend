@@ -5,6 +5,7 @@ import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.dtos.responses.TrackResponseDTO;
 import br.com.hyper.entities.TrackEntity;
+import br.com.hyper.enums.Privacy;
 import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.TrackRepository;
 import br.com.hyper.utils.LocalFileStorageUtil;
@@ -34,13 +35,21 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public PageResponseDTO<TrackResponseDTO> find(Pageable pageable) {
-        Page<TrackEntity> page = trackRepository.findAll(pageable);
+        Page<TrackEntity> page = trackRepository.findAllTracksByPrivacy(Privacy.PUBLIC, pageable);
 
         return paginationMapper.map(page, TrackResponseDTO.class);
     }
 
     @Override
-    public PageResponseDTO<TrackResponseDTO> findByArtistId(Pageable pageable, UUID customerId) {
+    public PageResponseDTO<TrackResponseDTO> findByArtistId(Pageable pageable, UUID artistId) {
+        Page<TrackEntity> page = trackRepository.findByArtistIdAndPrivacy(artistId, Privacy.PUBLIC, pageable);
+
+        return paginationMapper.map(page,TrackResponseDTO.class);
+    }
+
+    @Override
+    public PageResponseDTO<TrackResponseDTO> findAllByCustomer(Pageable pageable, UUID customerId) {
+
         Page<TrackEntity> page = trackRepository.findByArtistId(customerId, pageable);
 
         return paginationMapper.map(page,TrackResponseDTO.class);

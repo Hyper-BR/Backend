@@ -15,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,19 @@ public class TrackController {
         Pageable pageable = PageRequest.of(page, size);
 
         PageResponseDTO<TrackResponseDTO> response = trackService.findByArtistId(pageable, artistId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping(value = "/tracks/customer")
+    public ResponseEntity<PageResponseDTO<TrackResponseDTO>> findByCustomer(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+            @AuthenticationPrincipal CustomerEntity customer) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        PageResponseDTO<TrackResponseDTO> response = trackService.findAllByCustomer(pageable, customer.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
