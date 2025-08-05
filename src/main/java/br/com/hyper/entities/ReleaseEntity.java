@@ -1,6 +1,5 @@
 package br.com.hyper.entities;
 
-import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.enums.ReleaseStatus;
 import br.com.hyper.enums.ReleaseType;
 import jakarta.persistence.*;

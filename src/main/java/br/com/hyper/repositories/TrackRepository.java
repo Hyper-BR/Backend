@@ -27,12 +27,4 @@ public interface TrackRepository extends UuidRepository<TrackEntity> {
 
     @Query("SELECT t FROM TrackEntity t JOIN t.genres g WHERE g.name = :name")
     List<TrackEntity> findByGenreName(@Param("name") String name);
-
-    @Query("""
-    SELECT t
-    FROM TrackEntity t
-    JOIN t.artists a ON a.id = :artistId
-    LEFT JOIN FETCH t.release
-""")
-    List<TrackEntity> findTracksByArtistId(@Param("artistId") UUID artistId);
 }

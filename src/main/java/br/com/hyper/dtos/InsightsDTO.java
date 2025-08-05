@@ -1,6 +1,5 @@
 package br.com.hyper.dtos;
 
-import br.com.hyper.dtos.responses.TrackResponseDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,6 +17,6 @@ public class InsightsDTO {
     private BigDecimal totalRevenue;
     private Integer totalTracks;
     private Long totalAlbums;
-    private List<TrackResponseDTO> tracks;
+    private List<ReleaseInsightsDTO> releases;
     private List<ListenerDTO> topListeners;
 }
