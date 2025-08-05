@@ -50,7 +50,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public PageResponseDTO<TrackResponseDTO> findAllByCustomer(Pageable pageable, UUID customerId) {
 
-        Page<TrackEntity> page = trackRepository.findByArtistId(customerId, pageable);
+        Page<TrackEntity> page = trackRepository.findAllByArtistId(customerId, pageable);
 
         return paginationMapper.map(page,TrackResponseDTO.class);
     }

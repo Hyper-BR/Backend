@@ -10,6 +10,6 @@ import java.util.UUID;
 @Repository
 public interface ReleaseRepository extends UuidRepository<ReleaseEntity> {
 
-    @Query("SELECT r FROM ReleaseEntity r LEFT JOIN FETCH r.tracks t WHERE r.owner = :artistId")
+    @Query("SELECT r FROM ReleaseEntity r LEFT JOIN FETCH r.tracks t WHERE r.owner = :artistId ORDER BY r.createdDate DESC")
     List<ReleaseEntity> findByArtistId(UUID artistId);
 }

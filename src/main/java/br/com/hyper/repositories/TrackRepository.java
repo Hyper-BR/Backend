@@ -14,17 +14,17 @@ import java.util.UUID;
 @Repository
 public interface TrackRepository extends UuidRepository<TrackEntity> {
 
-    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE t.privacy = :privacy")
+    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE t.privacy = :privacy ORDER BY t.createdDate DESC")
     Page<TrackEntity> findAllTracksByPrivacy(@Param("privacy") Privacy privacy,
                                              Pageable pageable);
 
-    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId AND t.privacy = :privacy")
+    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId AND t.privacy = :privacy ORDER BY t.createdDate DESC")
     Page<TrackEntity> findByArtistIdAndPrivacy(@Param("artistId") UUID artistId,
                                                @Param("privacy") Privacy privacy,
                                                Pageable pageable);
 
-    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId")
-    Page<TrackEntity> findByArtistId(@Param("artistId") UUID artistId, Pageable pageable);
+    @Query("SELECT t FROM TrackEntity t JOIN t.artists a WHERE a.id = :artistId ORDER BY t.createdDate DESC")
+    Page<TrackEntity> findAllByArtistId(@Param("artistId") UUID artistId, Pageable pageable);
 
     @Query("SELECT DISTINCT t" +
            " FROM TrackEntity t" +

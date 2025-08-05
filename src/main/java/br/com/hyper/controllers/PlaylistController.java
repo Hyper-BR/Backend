@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,8 +26,7 @@ public class PlaylistController {
     private final PlaylistService playlistService;
 
     @PostMapping(value = "/playlists")
-    public ResponseEntity<PlaylistResponseDTO> save(
-            @RequestBody PlaylistRequestDTO playlist, @AuthenticationPrincipal CustomerEntity customer) {
+    public ResponseEntity<PlaylistResponseDTO> save(@RequestBody PlaylistRequestDTO playlist, @AuthenticationPrincipal CustomerEntity customer) {
 
         PlaylistResponseDTO response = playlistService.save(playlist, customer);
 
@@ -55,8 +53,8 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(value = "/playlists/artist")
-    public ResponseEntity<List<PlaylistResponseDTO>> findByArtist(@Param("artistId") UUID artistId) {
+    @GetMapping(value = "/playlists/artist/{artistId}")
+    public ResponseEntity<List<PlaylistResponseDTO>> findByArtist(@PathVariable UUID artistId) {
 
         List<PlaylistResponseDTO> response = playlistService.findByArtist(artistId);
 
