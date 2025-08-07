@@ -4,11 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum SubscriptionType {
-    FREE_LISTENER("Free Listener"),
-    FREE_ARTIST("Free Artist"),
-    SOLO("Solo"),
-    STUDENT("Student"),
-    FAMILY("Family"),
+    FREE("Free"),
+    PREMIUM("Premium"),
     ARTIST("Artist"),
     LABEL("Label");
 

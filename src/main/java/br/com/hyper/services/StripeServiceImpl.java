@@ -3,13 +3,14 @@ package br.com.hyper.services;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.SubscriptionEntity;
 import br.com.hyper.enums.ErrorCodes;
-import br.com.hyper.enums.SubscriptionType;
 import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.repositories.SubscriptionRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.SubscriptionUpdateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,16 +43,21 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public Session createSubscriptionCheckoutSession(CustomerEntity customer, Long planId) throws StripeException {
+    public Session createSubscriptionCheckoutSession(CustomerEntity customer, Long planId) {
         initStripe();
 
-        SubscriptionEntity subscription =findByIdOrThrowSubscriptionNotFoundException(planId);
+        SubscriptionEntity newSubscription = findByIdOrThrowSubscriptionNotFoundException(planId);
+        SubscriptionEntity currentSubscription = customer.getSubscription();
 
-        String priceId = getPriceIdForType(subscription.getType());
+        if (currentSubscription != null && currentSubscription.getId().equals(newSubscription.getId())) {
+            throw new GenericException(ErrorCodes.DUPLICATED_DATA, "Customer already has this subscription");
+        }
+
+        String priceId = newSubscription.getPaymentId();
 
         Map<String, String> metadata = Map.of(
                 "userId", customer.getId().toString(),
-                "planId", subscription.getId().toString()
+                "planId", newSubscription.getId().toString()
         );
 
         SessionCreateParams params = SessionCreateParams.builder()
@@ -96,7 +102,7 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public Session createCartCheckoutSession(CustomerEntity customer, UUID cartId) throws StripeException {
+    public Session createCartCheckoutSession(CustomerEntity customer, UUID cartId) {
         initStripe();
 
         Map<String, String> metadata = Map.of(
@@ -121,36 +127,30 @@ public class StripeServiceImpl implements StripeService {
                 .putAllMetadata(metadata)
                 .build();
 
-        return Session.create(params);
-    }
-
-    @Override
-    public void confirmCartPayment(String sessionId) throws StripeException {
-        initStripe();
-
-        Session session = Session.retrieve(sessionId);
-
-        if ("complete".equals(session.getStatus())) {
-            UUID customerId = UUID.fromString(session.getMetadata().get("customerId"));
-            UUID cartId = UUID.fromString(session.getMetadata().get("cartId"));
-
-            // Aqui você pode chamar um método para finalizar o pedido
-            log.info("Cart payment confirmed for customer: {} and cart: {}", customerId, cartId);
+        try{
+            return Session.create(params);
+        } catch (StripeException e) {
+            throw new GenericException(ErrorCodes.STRIPE_EXCEPTION, e.getMessage());
         }
     }
 
-    private String getPriceIdForType(SubscriptionType type) {
-        return switch (type) {
-            case SOLO -> "price_1RtWT6Qs8Aq2jGSv7HSTKJoH";
-            case ARTIST -> "price_1RtWT6Qs8Aq2jGSvJJxFj8W8";
-            case LABEL -> "price_1RtWT6Qs8Aq2jGSv9aRJkhMr";
-            default -> throw new GenericException(ErrorCodes.DATA_NOT_FOUND, "Invalid subscription type");
-        };
-    }
+    @Override
+    public void confirmCartPayment(String sessionId) {
+        initStripe();
 
-    private CustomerEntity findByIdOrThrowCustomerNotFoundException(UUID id) {
-        return customerRepository.findById(id).orElseThrow(
-                () -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
+        try {
+        Session session = Session.retrieve(sessionId);
+
+            if ("complete".equals(session.getStatus())) {
+                UUID customerId = UUID.fromString(session.getMetadata().get("customerId"));
+                UUID cartId = UUID.fromString(session.getMetadata().get("cartId"));
+
+                // Aqui você pode chamar um método para finalizar o pedido
+                log.info("Cart payment confirmed for customer: {} and cart: {}", customerId, cartId);
+            }
+        } catch (StripeException e) {
+            throw new GenericException(ErrorCodes.STRIPE_EXCEPTION, e.getMessage());
+        }
     }
 
     private SubscriptionEntity findByIdOrThrowSubscriptionNotFoundException(Long id) {

@@ -29,7 +29,10 @@ public class SubscriptionEntity extends BaseEntity implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "MONTHLY_PRICE", nullable = false)
-    private BigDecimal monthlyPrice;
+    @Column(name = "PAYMENT_ID", nullable = false)
+    private String paymentId;
+
+    @Column(name = "PRICE", nullable = false)
+    private BigDecimal price;
 
 }

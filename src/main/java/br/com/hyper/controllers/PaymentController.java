@@ -23,7 +23,7 @@ public class PaymentController {
 
     @PostMapping(value = "/payment/subscription/checkout")
     public ResponseEntity<Map<String, String>> subscriptionCheckout(@RequestBody SubscriptionDTO payload,
-                                                                    @AuthenticationPrincipal CustomerEntity customer) throws StripeException {
+                                                                    @AuthenticationPrincipal CustomerEntity customer){
 
         Session session = stripeService.createSubscriptionCheckoutSession(customer, payload.getId());
 
@@ -31,7 +31,7 @@ public class PaymentController {
     }
 
     @PostMapping(value = "/payment/subscription/confirm")
-    public ResponseEntity<Void> subscriptionConfirm(@RequestParam String sessionId) throws StripeException {
+    public ResponseEntity<Void> subscriptionConfirm(@RequestParam String sessionId){
 
         stripeService.confirmSubscriptionPayment(sessionId);
 
@@ -40,15 +40,15 @@ public class PaymentController {
 
     @PostMapping(value = "/payment/cart/checkout")
     public ResponseEntity<Map<String, String>> cartCheckout(@RequestBody TrackRequestDTO payload,
-                                                            @AuthenticationPrincipal CustomerEntity customer) throws StripeException {
+                                                            @AuthenticationPrincipal CustomerEntity customer){
 
-        Session session = stripeService.createCartCheckoutSession(customer.getId(), payload.getId());
+        Session session = stripeService.createCartCheckoutSession(customer, payload.getId());
 
         return ResponseEntity.ok(Map.of("redirectUrl", session.getUrl()));
     }
 
     @PostMapping(value = "/payment/cart/confirm")
-    public ResponseEntity<Void> cartConfirm(@RequestParam String sessionId) throws StripeException {
+    public ResponseEntity<Void> cartConfirm(@RequestParam String sessionId){
 
         stripeService.confirmCartPayment(sessionId);
 

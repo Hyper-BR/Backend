@@ -12,5 +12,5 @@ public class SubscriptionDTO {
     private SubscriptionType type;
     private String name;
     private String description;
-    private BigDecimal monthlyPrice;
+    private BigDecimal price;
 }
