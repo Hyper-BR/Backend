@@ -1,6 +1,7 @@
 package br.com.hyper.controllers;
 
 import br.com.hyper.dtos.SubscriptionDTO;
+import br.com.hyper.dtos.requests.TrackRequestDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.services.StripeService;
 import com.stripe.exception.StripeException;
@@ -20,19 +21,36 @@ public class PaymentController {
 
     private final StripeService stripeService;
 
-    @PostMapping(value = "/payment/checkout")
-    public ResponseEntity<Map<String, String>> checkout(@RequestBody SubscriptionDTO payload,
-                                                        @AuthenticationPrincipal CustomerEntity customer) throws StripeException {
+    @PostMapping(value = "/payment/subscription/checkout")
+    public ResponseEntity<Map<String, String>> subscriptionCheckout(@RequestBody SubscriptionDTO payload,
+                                                                    @AuthenticationPrincipal CustomerEntity customer) throws StripeException {
 
-        Session session = stripeService.createCheckoutSession(customer.getId(), payload.getId());
+        Session session = stripeService.createSubscriptionCheckoutSession(customer, payload.getId());
 
         return ResponseEntity.ok(Map.of("redirectUrl", session.getUrl()));
     }
 
-    @PostMapping(value = "/payment/confirm")
-    public ResponseEntity<Void> confirm(@RequestParam String sessionId) throws StripeException {
+    @PostMapping(value = "/payment/subscription/confirm")
+    public ResponseEntity<Void> subscriptionConfirm(@RequestParam String sessionId) throws StripeException {
 
-        stripeService.confirmPayment(sessionId);
+        stripeService.confirmSubscriptionPayment(sessionId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping(value = "/payment/cart/checkout")
+    public ResponseEntity<Map<String, String>> cartCheckout(@RequestBody TrackRequestDTO payload,
+                                                            @AuthenticationPrincipal CustomerEntity customer) throws StripeException {
+
+        Session session = stripeService.createCartCheckoutSession(customer.getId(), payload.getId());
+
+        return ResponseEntity.ok(Map.of("redirectUrl", session.getUrl()));
+    }
+
+    @PostMapping(value = "/payment/cart/confirm")
+    public ResponseEntity<Void> cartConfirm(@RequestParam String sessionId) throws StripeException {
+
+        stripeService.confirmCartPayment(sessionId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -92,13 +92,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void delete(UUID id) {
-        CustomerEntity userCurrent = findByIdOrThrowUserDataNotFoundException(id);
+        CustomerEntity userCurrent = findByIdOrThrowCustomerDataNotFoundException(id);
 
         modelMapper.map(userCurrent, CustomerResponseDTO.class);
         customerRepository.delete(userCurrent);
     }
 
-    private CustomerEntity findByIdOrThrowUserDataNotFoundException(UUID id) {
+    private CustomerEntity findByIdOrThrowCustomerDataNotFoundException(UUID id) {
         return customerRepository.findById(id).orElseThrow(
                 () -> new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage()));
     }
