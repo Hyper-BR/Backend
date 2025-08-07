@@ -1,6 +1,7 @@
 package br.com.hyper.services;
 
 import br.com.hyper.constants.BaseUrls;
+import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.enums.ErrorCodes;
 import br.com.hyper.dtos.requests.ReleaseRequestDTO;
 import br.com.hyper.dtos.requests.TrackRequestDTO;
@@ -13,11 +14,14 @@ import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.ArtistRepository;
 import br.com.hyper.repositories.ReleaseRepository;
 import br.com.hyper.utils.LocalFileStorageUtil;
+import br.com.hyper.utils.PaginationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +41,7 @@ public class ReleaseServiceImpl implements ReleaseService {
     private final ReleaseRepository releaseRepository;
     private final ArtistRepository artistRepository;
     private final ModelMapper modelMapper;
+    private final PaginationMapper paginationMapper;
 
     @Override
     public ReleaseResponseDTO save(ReleaseRequestDTO releaseDTO, CustomerEntity customer) {
@@ -65,6 +70,20 @@ public class ReleaseServiceImpl implements ReleaseService {
         );
 
         return modelMapper.map(release, ReleaseResponseDTO.class);
+    }
+
+    @Override
+    public PageResponseDTO<ReleaseResponseDTO> getReleasesByArtist(UUID artistId, Pageable pageable) {
+        Page<ReleaseEntity> entities = releaseRepository.findReleasesByArtistIdAndPrivacy(artistId, Privacy.PUBLIC, pageable);
+
+        return paginationMapper.map(entities, ReleaseResponseDTO.class);
+    }
+
+    @Override
+    public PageResponseDTO<ReleaseResponseDTO> getReleasesByCustomer(UUID customerId, Pageable pageable) {
+        Page<ReleaseEntity> entities = releaseRepository.findReleasesByCustomer(customerId, pageable);
+
+        return paginationMapper.map(entities, ReleaseResponseDTO.class);
     }
 
     private UUID resolveOwner(CustomerEntity customer) {
