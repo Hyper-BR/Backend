@@ -1,6 +1,7 @@
 package br.com.hyper.services;
 
 import br.com.hyper.constants.BaseUrls;
+import br.com.hyper.entities.CartEntity;
 import br.com.hyper.enums.ErrorCodes;
 import br.com.hyper.dtos.requests.AuthRequestDTO;
 import br.com.hyper.dtos.requests.CustomerRequestDTO;
@@ -9,6 +10,7 @@ import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.SubscriptionEntity;
 import br.com.hyper.enums.UserRole;
 import br.com.hyper.exceptions.GenericException;
+import br.com.hyper.repositories.CartRepository;
 import br.com.hyper.repositories.CustomerRepository;
 import br.com.hyper.repositories.SubscriptionRepository;
 import br.com.hyper.utils.JwtUtil;
@@ -39,16 +41,12 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
 
     private final CustomerRepository customerRepository;
-
     private final AuthenticationManager authenticationManager;
-
-    private final JwtUtil jwtUtil;
-
-    private final ModelMapper modelMapper;
-
-    private final TokenService tokenService;
-
     private final SubscriptionRepository subscriptionRepository;
+    private final CartRepository cartRepository;
+    private final JwtUtil jwtUtil;
+    private final ModelMapper modelMapper;
+    private final TokenService tokenService;
 
     @Override
     public CustomerResponseDTO register(CustomerRequestDTO customer, HttpServletResponse http) {
@@ -69,7 +67,15 @@ public class AuthServiceImpl implements AuthService {
             customerEntity.setIsLabel(false);
             customerEntity.setPlaylists(new ArrayList<>());
             customerEntity.setAvatarUrl(BaseUrls.AVATAR_URL);
+
+            CartEntity cart = new CartEntity();
+            cart.setName("Principal");
+            cart.setCustomer(customerEntity);
+
+            customerEntity.getCarts().add(cart);
             customerEntity = customerRepository.save(customerEntity);
+
+            cartRepository.save(cart);
 
             Cookie accessCookie = tokenService.generateAccessTokenCookie(customerEntity);
             Cookie refreshCookie = tokenService.generateRefreshTokenCookie(customerEntity);
