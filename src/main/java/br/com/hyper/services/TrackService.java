@@ -12,7 +12,9 @@ public interface TrackService {
 
     PageResponseDTO<TrackResponseDTO> find(Pageable pageable);
 
-    PageResponseDTO<TrackResponseDTO> findByArtistId(Pageable pageable, UUID customerId);
+    PageResponseDTO<TrackResponseDTO> findByArtistId(Pageable pageable, UUID artistId);
+
+    PageResponseDTO<TrackResponseDTO> findAllByCustomer(Pageable pageable, UUID customerId);
 
     TrackResponseDTO findById(UUID trackId);
 

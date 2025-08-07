@@ -19,7 +19,8 @@ public class ModelMapperConfig {
                 .addMappings(m -> m.map(TrackEntity::getCover, TrackResponseDTO::setCoverUrl));
 
         mapper.typeMap(ArtistEntity.class, ArtistResponseDTO.class)
-                .addMappings(m -> m.map(src -> src.getCustomer().getAvatarUrl(), ArtistResponseDTO::setAvatarUrl));
+                .addMappings(m -> m.map(src -> src.getCustomer().getAvatarUrl(), ArtistResponseDTO::setAvatarUrl))
+                .addMappings(m -> m.map(src -> src.getCustomer().getCoverUrl(), ArtistResponseDTO::setCoverUrl));
 
         return mapper;
     }

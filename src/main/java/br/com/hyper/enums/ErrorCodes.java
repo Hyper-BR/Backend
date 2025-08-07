@@ -1,4 +1,4 @@
-package br.com.hyper.constants;
+package br.com.hyper.enums;
 
 import lombok.Getter;
 
@@ -9,11 +9,13 @@ public enum ErrorCodes {
 	FILE_READ_ERROR("FILE_READ_ERROR", "File read error"),
 	DUPLICATED_DATA("DUPLICATED_DATA", "Trying to save data that already exists"),
 	INVALID_DATA("INVALID_DATA", "Invalid data"),
+	FILE_STORAGE_ERROR("FILE_STORAGE_ERROR", "File storage error"),
 	UNAUTHORIZED("UNAUTHORIZED", "Unauthorized access"),
 	FILE_NOT_FOUND("FILE_NOT_FOUND", "File not found"),
 	LIMIT_EXCEEDED("LIMIT_EXCEEDED", "Limit exceeded"),
 	AWS_SECRETS_ERROR("AWS_SECRETS_ERROR", "Something went wrong with the secrets"),
-	AWS_CONNECTION_ERROR("AWS_CONNECTION_ERROR", "Something went wrong with the save");
+	AWS_CONNECTION_ERROR("AWS_CONNECTION_ERROR", "Something went wrong with the save"),
+	STRIPE_EXCEPTION("STRIPE_EXCEPTION", "Something went wrong with the checkout");
 
 	private final String code;
 	private final String message;

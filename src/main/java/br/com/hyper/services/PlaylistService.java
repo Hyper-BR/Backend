@@ -19,6 +19,8 @@ public interface PlaylistService {
 
     List<PlaylistResponseDTO> findByCustomer(UUID id);
 
+    List<PlaylistResponseDTO> findByArtist(UUID id);
+
     PlaylistResponseDTO update(UUID id, PlaylistRequestDTO playlist);
 
     void delete(UUID id);

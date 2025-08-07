@@ -1,12 +1,14 @@
 package br.com.hyper.services;
 
-import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.constants.BaseUrls;
+import br.com.hyper.enums.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.PlaylistRequestDTO;
 import br.com.hyper.dtos.responses.PlaylistResponseDTO;
 import br.com.hyper.entities.CustomerEntity;
 import br.com.hyper.entities.PlaylistEntity;
 import br.com.hyper.entities.TrackEntity;
+import br.com.hyper.enums.Privacy;
 import br.com.hyper.exceptions.GenericException;
 import br.com.hyper.repositories.PlaylistRepository;
 import br.com.hyper.repositories.TrackRepository;
@@ -41,15 +43,16 @@ public class PlaylistServiceImpl implements PlaylistService {
         PlaylistEntity playlistEntity;
         try{
             if (playlist.getName() == null || playlist.getName().isEmpty()) {
-                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
+                throw new GenericException(ErrorCodes.INVALID_DATA, "Playlist name cannot be null or empty.");
             }
 
-            if (playlist.getName().length() > 50) {
-                throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
+            if (playlist.getName().length() > 30) {
+                throw new GenericException(ErrorCodes.INVALID_DATA, "Playlist name is too long. Maximum length is 30 characters.");
             }
             
             playlistEntity = modelMapper.map(playlist, PlaylistEntity.class);
             playlistEntity.setCustomer(customer);
+            playlistEntity.setCoverUrl(BaseUrls.PLAYLIST_URL);
             playlistEntity = playlistRepository.save(playlistEntity);
 
             return modelMapper.map(playlistEntity, PlaylistResponseDTO.class);
@@ -84,6 +87,26 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         try {
             playlists = playlistRepository.findByCustomerId(id);
+
+        } catch (java.lang.Exception e) {
+            throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());
+        }
+
+        return playlists.stream()
+                .map(playlist -> modelMapper.map(playlist, PlaylistResponseDTO.class))
+                .toList();
+    }
+
+    @Override
+    public List<PlaylistResponseDTO> findByArtist(UUID id) {
+        List<PlaylistEntity> playlists;
+
+        if (id == null) {
+            throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());
+        }
+
+        try {
+            playlists = playlistRepository.findByArtistId(id, Privacy.PUBLIC);
 
         } catch (java.lang.Exception e) {
             throw new GenericException(ErrorCodes.DATA_NOT_FOUND, ErrorCodes.DATA_NOT_FOUND.getMessage());

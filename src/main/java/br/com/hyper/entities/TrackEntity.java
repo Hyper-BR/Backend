@@ -28,7 +28,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "RELEASE_ID", nullable = false)
     private ReleaseEntity release;
 
@@ -60,7 +60,7 @@ public class TrackEntity extends BaseEntity implements Serializable {
     @Column(name = "PRIVACY", nullable = false)
     private Privacy privacy;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "TRACK_GENRES",
             joinColumns = @JoinColumn(name = "TRACK_ID"),
@@ -68,16 +68,21 @@ public class TrackEntity extends BaseEntity implements Serializable {
     )
     private List<GenreEntity> genres;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "track_artists",
-            joinColumns = @JoinColumn(name = "track_id"),
-            inverseJoinColumns = @JoinColumn(name = "artist_id")
+            name = "TRACK_ARTISTS",
+            joinColumns = @JoinColumn(name = "TRACK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ARTIST_ID")
     )
     private List<ArtistEntity> artists;
 
     @JsonProperty("coverUrl")
     public String getCover() {
         return release.getCoverUrl();
+    }
+
+    @JsonProperty("plays")
+    public long getPlays() {
+        return plays != null ? plays.longValue() : 0;
     }
 }

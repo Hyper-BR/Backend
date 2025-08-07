@@ -26,8 +26,7 @@ public class PlaylistController {
     private final PlaylistService playlistService;
 
     @PostMapping(value = "/playlists")
-    public ResponseEntity<PlaylistResponseDTO> save(
-            @RequestBody PlaylistRequestDTO playlist, @AuthenticationPrincipal CustomerEntity customer) {
+    public ResponseEntity<PlaylistResponseDTO> save(@RequestBody PlaylistRequestDTO playlist, @AuthenticationPrincipal CustomerEntity customer) {
 
         PlaylistResponseDTO response = playlistService.save(playlist, customer);
 
@@ -54,6 +53,14 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping(value = "/playlists/artist/{artistId}")
+    public ResponseEntity<List<PlaylistResponseDTO>> findByArtist(@PathVariable UUID artistId) {
+
+        List<PlaylistResponseDTO> response = playlistService.findByArtist(artistId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping(value = "/playlists/{playlistId}")
     public ResponseEntity<PlaylistResponseDTO> findById(@PathVariable UUID playlistId) {
 
@@ -70,7 +77,7 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping(value = "/playlists/{playlistId}/tracks/{trackId}")
+    @PostMapping(value = "/playlist/{playlistId}/track/{trackId}")
     public ResponseEntity<PlaylistResponseDTO> addTrack(@PathVariable UUID playlistId,
                                                         @PathVariable UUID trackId) {
 
@@ -79,7 +86,7 @@ public class PlaylistController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping(value = "/playlists/{playlistId}/tracks/{trackId}")
+    @DeleteMapping(value = "/playlist/{playlistId}/track/{trackId}")
     public ResponseEntity<PlaylistResponseDTO> removeTrack(@PathVariable UUID playlistId,
                                                            @PathVariable UUID trackId) {
 

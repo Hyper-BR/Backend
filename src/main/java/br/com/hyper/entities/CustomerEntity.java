@@ -1,6 +1,6 @@
 package br.com.hyper.entities;
 
-import br.com.hyper.constants.DefaultAssets;
+import br.com.hyper.constants.BaseUrls;
 import br.com.hyper.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,11 +48,12 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     private String coverUrl;
 
     @Column(name = "AVATAR_URL")
-    private String avatarUrl = DefaultAssets.AVATAR_URL;
+    private String avatarUrl = BaseUrls.AVATAR_URL;
 
     @Column(name = "BIOGRAPHY")
     private String biography;
 
+    @Enumerated(EnumType.STRING)
     @JoinColumn(name = "ROLE", nullable = false)
     private UserRole role;
 
@@ -67,27 +68,27 @@ public class CustomerEntity extends BaseEntity implements Serializable, UserDeta
     private Boolean isLabel;
 
     @OneToOne(mappedBy = "customer")
-    @JoinColumn(name = "customer_id", unique = true)
     private ArtistEntity artistProfile;
-
-    @OneToOne(mappedBy = "customer")
-    @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private LabelEntity labelProfile;
 
     @OneToMany(mappedBy = "customer")
     private List<PlaylistEntity> playlists;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_CUSTOMER"), new SimpleGrantedAuthority("ROLE_ARTIST"));
-        } else if(this.role == UserRole.ARTIST) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ARTIST"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-        } else if(this.role == UserRole.LABEL) {
-            return List.of(new SimpleGrantedAuthority("ROLE_LABEL"), new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-        }
-        return List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+        return switch (this.role) {
+            case ADMIN -> List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_CUSTOMER"),
+                    new SimpleGrantedAuthority("ROLE_ARTIST")
+            );
+            case ARTIST -> List.of(
+                    new SimpleGrantedAuthority("ROLE_ARTIST"),
+                    new SimpleGrantedAuthority("ROLE_CUSTOMER")
+            );
+            default -> List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+        };
     }
+
 
     @Override
     public String getUsername() {

@@ -1,6 +1,6 @@
 package br.com.hyper.services;
 
-import br.com.hyper.constants.ErrorCodes;
+import br.com.hyper.enums.ErrorCodes;
 import br.com.hyper.dtos.PageResponseDTO;
 import br.com.hyper.dtos.requests.ArtistRequestDTO;
 import br.com.hyper.entities.CustomerEntity;
@@ -39,19 +39,23 @@ public class ArtistServiceImpl implements ArtistService {
                 throw new GenericException(ErrorCodes.DUPLICATED_DATA, ErrorCodes.DUPLICATED_DATA.getMessage());
             }
 
-            if (Boolean.TRUE.equals(customer.getIsLabel()))  {
+            if (Boolean.TRUE.equals(customer.getIsLabel())) {
                 throw new GenericException(ErrorCodes.INVALID_DATA, ErrorCodes.INVALID_DATA.getMessage());
             }
+
+            // ✅ Reatachar o customer manualmente (garante estado gerenciado)
+            CustomerEntity managedCustomer = customerRepository.findById(customer.getId())
+                    .orElseThrow(() -> new GenericException(ErrorCodes.DATA_NOT_FOUND, "Customer not found"));
 
             ArtistEntity artist = modelMapper.map(artistDTO, ArtistEntity.class);
             artist.setUsername(artistDTO.getUsername().trim());
             artist.setIsVerified(false);
             artist.setFreeTrackLimit(5);
 
-            customer.setIsArtist(true);
-            customer = customerRepository.save(customer);
+            managedCustomer.setIsArtist(true);
+            customerRepository.save(managedCustomer);
 
-            artist.setCustomer(customer);
+            artist.setCustomer(managedCustomer);
             artist = artistRepository.save(artist);
 
             return modelMapper.map(artist, ArtistResponseDTO.class);
@@ -59,6 +63,7 @@ public class ArtistServiceImpl implements ArtistService {
             throw new GenericException(ErrorCodes.INVALID_DATA, e.getMessage());
         }
     }
+
 
     @Override
     public PageResponseDTO<ArtistResponseDTO> find(Pageable pageable) {

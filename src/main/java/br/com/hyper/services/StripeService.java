@@ -1,12 +1,16 @@
 package br.com.hyper.services;
 
-import com.stripe.exception.StripeException;
+import br.com.hyper.entities.CustomerEntity;
 import com.stripe.model.checkout.Session;
 import java.util.UUID;
 
 public interface StripeService {
 
-    Session createCheckoutSession(UUID userId, Long planId) throws StripeException;
+    Session createSubscriptionCheckoutSession(CustomerEntity customer, Long planId);
 
-    void confirmPayment(String sessionId) throws StripeException;
+    void confirmSubscriptionPayment(String sessionId);
+
+    Session createCartCheckoutSession(CustomerEntity customer, UUID trackId);
+
+    void confirmCartPayment(String sessionId);
 }
